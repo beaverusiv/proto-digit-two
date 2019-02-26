@@ -1,5 +1,6 @@
 package nz.kiwi.loomans.canyoudigit.screens;
 
+import com.artemis.ComponentMapper;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
@@ -8,8 +9,12 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.math.Vector2;
 
+import nz.kiwi.loomans.canyoudigit.components.PositionComponent;
+import nz.kiwi.loomans.canyoudigit.components.TextureComponent;
 import nz.kiwi.loomans.canyoudigit.systems.MapSystem;
+import nz.kiwi.loomans.canyoudigit.systems.RenderingSystem;
 
 public class PlayScreen implements Screen {
     private OrthographicCamera camera;
@@ -35,6 +40,7 @@ public class PlayScreen implements Screen {
 
     @Override
     public void dispose() {
+        world.dispose();
     }
 
     @Override
@@ -53,6 +59,7 @@ public class PlayScreen implements Screen {
     public void show() {
         camera = new OrthographicCamera();
         MapSystem mapSystem = new MapSystem(camera);
+        RenderingSystem renderingSystem = new RenderingSystem(camera);
 
         MapProperties prop = mapSystem.getMapProperties();
 
@@ -63,8 +70,18 @@ public class PlayScreen implements Screen {
         camera.translate(mapCentreWidth, 0);
 
         WorldConfiguration config = new WorldConfigurationBuilder()
-                .with(mapSystem)
+                .with(mapSystem, renderingSystem)
                 .build();
         world = new World(config);
+
+        ComponentMapper<PositionComponent> mPosition = new ComponentMapper<PositionComponent>(PositionComponent.class, world);
+        ComponentMapper<TextureComponent> mTexture = new ComponentMapper<TextureComponent>(TextureComponent.class, world);
+
+        int player = world.create();
+        PositionComponent pos = mPosition.create(player);
+        TextureComponent tex = mTexture.create(player);
+
+        pos.position = new Vector2(10, 10);
+        tex.dimensions = new Vector2(50, 50);
     }
 }
