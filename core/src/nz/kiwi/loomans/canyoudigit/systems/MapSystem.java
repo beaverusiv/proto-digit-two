@@ -32,6 +32,7 @@ public class MapSystem extends BaseSystem {
 
     @Override
     protected void processSystem() {
+        camera.update();
         renderer.setView(camera);
         renderer.render();
     }

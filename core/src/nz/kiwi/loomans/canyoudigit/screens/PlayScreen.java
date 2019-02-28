@@ -1,6 +1,5 @@
 package nz.kiwi.loomans.canyoudigit.screens;
 
-import com.artemis.ComponentMapper;
 import com.artemis.World;
 import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
@@ -9,10 +8,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.math.Vector2;
 
-import nz.kiwi.loomans.canyoudigit.components.PositionComponent;
-import nz.kiwi.loomans.canyoudigit.components.TextureComponent;
+import nz.kiwi.loomans.canyoudigit.systems.InputSystem;
 import nz.kiwi.loomans.canyoudigit.systems.MapSystem;
 import nz.kiwi.loomans.canyoudigit.systems.RenderingSystem;
 
@@ -69,19 +66,12 @@ public class PlayScreen implements Screen {
         float mapCentreWidth = mapWidth * tilePixelWidth / 2.0f;
         camera.translate(mapCentreWidth, 0);
 
+        int player = renderingSystem.getPlayer();
+
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(mapSystem, renderingSystem)
+                .with(new InputSystem(player))
                 .build();
         world = new World(config);
-
-        ComponentMapper<PositionComponent> mPosition = new ComponentMapper<PositionComponent>(PositionComponent.class, world);
-        ComponentMapper<TextureComponent> mTexture = new ComponentMapper<TextureComponent>(TextureComponent.class, world);
-
-        int player = world.create();
-        PositionComponent pos = mPosition.create(player);
-        TextureComponent tex = mTexture.create(player);
-
-        pos.position = new Vector2(10, 10);
-        tex.dimensions = new Vector2(50, 50);
     }
 }
