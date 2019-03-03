@@ -8,7 +8,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 
 public class MapSystem extends BaseSystem {
-    private TiledMap map;
+    public TiledMap map;
     private IsometricTiledMapRenderer renderer;
     private OrthographicCamera camera;
 
@@ -37,7 +37,10 @@ public class MapSystem extends BaseSystem {
         renderer.render();
     }
 
-    public MapProperties getMapProperties() {
-        return map.getProperties();
+    public float getMapCentre() {
+        int mapWidth = map.getProperties().get("width", Integer.class);
+        int tilePixelWidth = map.getProperties().get("tilewidth", Integer.class);
+
+        return mapWidth * tilePixelWidth / 2.0f;
     }
 }

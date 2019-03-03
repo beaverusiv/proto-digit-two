@@ -8,11 +8,13 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 
 import nz.kiwi.loomans.canyoudigit.components.InputComponent;
+import nz.kiwi.loomans.canyoudigit.components.MovingComponent;
 import nz.kiwi.loomans.canyoudigit.components.PositionComponent;
 
 public class InputSystem extends IteratingSystem implements InputProcessor {
     private ComponentMapper<InputComponent> inputMap;
     private ComponentMapper<PositionComponent> posMap;
+    private ComponentMapper<MovingComponent> moveMap;
     private int player;
 
     private static final int PLAYER_DIM = 30;
@@ -20,7 +22,7 @@ public class InputSystem extends IteratingSystem implements InputProcessor {
     private static final float TILE_HEIGHT = 64;
 
     public InputSystem(int player) {
-        super(Aspect.all(InputComponent.class, PositionComponent.class));
+        super(Aspect.all(InputComponent.class, PositionComponent.class, MovingComponent.class));
         Gdx.input.setInputProcessor(this);
         this.player = player;
     }
@@ -47,8 +49,10 @@ public class InputSystem extends IteratingSystem implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        Vector2 coords = getTileCoords(screenX - 256, screenY - 507);
-        setPlayerTileCoords(coords.x, coords.y);
+        MovingComponent m = moveMap.get(player);
+        if (m.target == null) {
+            m.target = new Vector2(getTileCoords(screenX - 256, screenY - 507));
+        }
         return false;
     }
 

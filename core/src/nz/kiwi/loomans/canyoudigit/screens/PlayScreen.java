@@ -6,16 +6,16 @@ import com.artemis.WorldConfigurationBuilder;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.maps.MapProperties;
 
+import nz.kiwi.loomans.canyoudigit.systems.CameraSystem;
 import nz.kiwi.loomans.canyoudigit.systems.InputSystem;
 import nz.kiwi.loomans.canyoudigit.systems.MapSystem;
+import nz.kiwi.loomans.canyoudigit.systems.MovingSystem;
 import nz.kiwi.loomans.canyoudigit.systems.RenderingSystem;
 
 public class PlayScreen implements Screen {
-    private OrthographicCamera camera;
     private World world;
+    private CameraSystem cameraSystem = new CameraSystem();
 
     @Override
     public void pause() {
@@ -42,9 +42,7 @@ public class PlayScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        camera.viewportWidth = width;
-        camera.viewportHeight = height;
-        camera.update();
+        cameraSystem.resize(width, height);
     }
 
     @Override
@@ -54,23 +52,16 @@ public class PlayScreen implements Screen {
 
     @Override
     public void show() {
-        camera = new OrthographicCamera();
-        MapSystem mapSystem = new MapSystem(camera);
-        RenderingSystem renderingSystem = new RenderingSystem(camera);
+        MapSystem mapSystem = new MapSystem(cameraSystem.mapCamera);
+        RenderingSystem renderingSystem = new RenderingSystem(cameraSystem.mapCamera);
 
-        MapProperties prop = mapSystem.getMapProperties();
-
-        int mapWidth = prop.get("width", Integer.class);
-        int tilePixelWidth = prop.get("tilewidth", Integer.class);
-
-        float mapCentreWidth = mapWidth * tilePixelWidth / 2.0f;
-        camera.translate(mapCentreWidth, 0);
+        cameraSystem.mapCamera.translate(mapSystem.getMapCentre(), 0);
 
         int player = renderingSystem.getPlayer();
 
         WorldConfiguration config = new WorldConfigurationBuilder()
                 .with(mapSystem, renderingSystem)
-                .with(new InputSystem(player))
+                .with(new InputSystem(player), new MovingSystem(mapSystem.map))
                 .build();
         world = new World(config);
     }
