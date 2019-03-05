@@ -6,6 +6,7 @@ import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import nz.kiwi.loomans.canyoudigit.components.MovingComponent;
 import nz.kiwi.loomans.canyoudigit.components.PositionComponent;
