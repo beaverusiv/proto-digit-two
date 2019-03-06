@@ -23,5 +23,8 @@ public class CameraSystem extends IteratingSystem {
         mapCamera.viewportWidth = width;
         mapCamera.viewportHeight = height;
         mapCamera.update();
+        hudCamera.viewportWidth = width;
+        hudCamera.viewportHeight = height;
+        hudCamera.update();
     }
 }

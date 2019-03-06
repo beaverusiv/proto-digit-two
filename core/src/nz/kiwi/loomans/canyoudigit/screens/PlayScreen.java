@@ -8,10 +8,11 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 
 import nz.kiwi.loomans.canyoudigit.systems.CameraSystem;
+import nz.kiwi.loomans.canyoudigit.systems.GuiRenderingSystem;
 import nz.kiwi.loomans.canyoudigit.systems.InputSystem;
 import nz.kiwi.loomans.canyoudigit.systems.MapSystem;
 import nz.kiwi.loomans.canyoudigit.systems.MovingSystem;
-import nz.kiwi.loomans.canyoudigit.systems.RenderingSystem;
+import nz.kiwi.loomans.canyoudigit.systems.CharacterRenderingSystem;
 
 public class PlayScreen implements Screen {
     private World world;
@@ -52,17 +53,18 @@ public class PlayScreen implements Screen {
 
     @Override
     public void show() {
-        MapSystem mapSystem = new MapSystem(cameraSystem.mapCamera);
-        RenderingSystem renderingSystem = new RenderingSystem(cameraSystem.mapCamera);
+        CharacterRenderingSystem characterRenderingSystem = new CharacterRenderingSystem();
 
-        cameraSystem.mapCamera.translate(mapSystem.getMapCentre(), 0);
-
-        int player = renderingSystem.getPlayer();
+        int player = characterRenderingSystem.getPlayer();
 
         WorldConfiguration config = new WorldConfigurationBuilder()
-                .with(mapSystem, renderingSystem)
-                .with(new InputSystem(player), new MovingSystem(mapSystem.map))
-                .build();
+            .with(cameraSystem)
+            .with(new MapSystem())
+            .with(characterRenderingSystem)
+            .with(new InputSystem(player))
+            .with(new MovingSystem())
+            .with(new GuiRenderingSystem())
+            .build();
         world = new World(config);
     }
 }

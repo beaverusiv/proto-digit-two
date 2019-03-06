@@ -3,54 +3,130 @@ package nz.kiwi.loomans.canyoudigit.systems;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.systems.IteratingSystem;
-import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
+import java.util.HashMap;
+
+import nz.kiwi.loomans.canyoudigit.components.AnimationComponent;
 import nz.kiwi.loomans.canyoudigit.components.MovingComponent;
 import nz.kiwi.loomans.canyoudigit.components.PositionComponent;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 public class MovingSystem extends IteratingSystem {
     private ComponentMapper<PositionComponent> posMap;
     private ComponentMapper<MovingComponent> moveMap;
+    private ComponentMapper<AnimationComponent> aniMap;
+    private HashMap<String, Actor> actors = new HashMap<String, Actor>();
+
+    private MapSystem mapSystem;
     private TiledMapTileLayer layer;
 
     private static final int PLAYER_DIM = 30;
     private static final float TILE_WIDTH = 128;
     private static final float TILE_HEIGHT = 64;
+    private static final float STEP_DURATION = 2f;
 
-    public MovingSystem(TiledMap map) {
+    @Override
+    protected void initialize() {
+        super.initialize();
+
+        this.layer = (TiledMapTileLayer)mapSystem.map.getLayers().get(0);
+    }
+
+    public MovingSystem() {
         super(Aspect.all(PositionComponent.class, MovingComponent.class));
-        this.layer = (TiledMapTileLayer)map.getLayers().get(0);
     }
 
     @Override
     protected void process(int entityId) {
-        MovingComponent m = moveMap.get(entityId);
+        float deltaTime = Gdx.graphics.getDeltaTime();
+
+        final MovingComponent m = moveMap.get(entityId);
+        final AnimationComponent a = aniMap.get(entityId);
+        PositionComponent p = posMap.get(entityId);
         if (m.target == null) {
             return;
         }
-        PositionComponent p = posMap.get(entityId);
-        Vector2 v = getTileCoords((int)p.position.x, ((int)p.position.y) * -1);
-        if (v.x < m.target.x) {
-            setTileCoords(v.x + 1, v.y, entityId);
-            return;
-        } else if (v.x > m.target.x) {
-            setTileCoords(v.x - 1, v.y, entityId);
-            return;
+        String key = String.valueOf(entityId);
+        if (!actors.containsKey(key)) {
+            actors.put(key, new Actor());
+            actors.get(key).setPosition(p.position.x, p.position.y);
         }
-        if (v.y < m.target.y) {
-            setTileCoords(v.x, v.y + 1, entityId);
-            return;
-        } else if (v.y > m.target.y) {
-            setTileCoords(v.x, v.y - 1, entityId);
-            return;
+        Actor actor = actors.get(key);
+        if (a.name == null) {
+            System.out.println("Checking movement");
+            Vector2 v = getTileCoords((int) p.position.x, ((int) p.position.y) * -1);
+            if (v.x < m.target.x) {
+                a.name = "walk_right";
+                actor.addAction(
+                        sequence(
+                                Actions.moveTo(p.position.x + TILE_WIDTH / 2f, p.position.y + TILE_HEIGHT / 2f, STEP_DURATION),
+                                run(new Runnable() {
+                                    public void run() {
+                                        System.out.println("Done with movement");
+                                        a.name = null;
+                                    }
+                                })
+                        )
+                );
+            } else if (v.x > m.target.x) {
+                a.name = "walk_left";
+                actor.addAction(
+                        sequence(
+                                Actions.moveTo(p.position.x - TILE_WIDTH / 2f, p.position.y - TILE_HEIGHT / 2f, STEP_DURATION),
+                                run(new Runnable() {
+                                    public void run() {
+                                        System.out.println("Done with movement");
+                                        a.name = null;
+                                    }
+                                })
+                        )
+                );
+            } else if (v.y < m.target.y) {
+                a.name = "walk_down";
+                actor.addAction(
+                        sequence(
+                                Actions.moveTo(p.position.x + TILE_WIDTH / 2f, p.position.y - TILE_HEIGHT / 2f, STEP_DURATION),
+                                run(new Runnable() {
+                                    public void run() {
+                                        System.out.println("Done with movement");
+                                        a.name = null;
+                                    }
+                                })
+                        )
+                );
+            } else if (v.y > m.target.y) {
+                a.name = "walk_up";
+                actor.addAction(
+                        sequence(
+                                Actions.moveTo(p.position.x - TILE_WIDTH / 2f, p.position.y + TILE_HEIGHT / 2f, STEP_DURATION),
+                                run(new Runnable() {
+                                    public void run() {
+                                        System.out.println("Done with movement");
+                                        a.name = null;
+                                    }
+                                })
+                        )
+                );
+            } else if (v.x == m.target.x && v.y == m.target.y) {
+                TiledMapTileLayer.Cell cell = layer.getCell((int)m.target.y, (int)m.target.x);
+                if (cell != null) {
+                    cell.setRotation(1);
+                }
+                m.target = null;
+                a.name = null;
+            }
         }
-        if (v.x == m.target.x && v.y == m.target.y) {
-            layer.getCell((int)m.target.y, (int)m.target.x).setRotation(1);
-            m.target = null;
-        }
+
+        actor.act(deltaTime);
+        p.position.x = actor.getX();
+        p.position.y = actor.getY();
     }
 
     private void setTileCoords(float x, float y, int entity) {

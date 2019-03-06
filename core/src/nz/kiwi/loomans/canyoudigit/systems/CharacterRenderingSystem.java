@@ -4,7 +4,6 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,13 +18,13 @@ import nz.kiwi.loomans.canyoudigit.components.MovingComponent;
 import nz.kiwi.loomans.canyoudigit.components.PositionComponent;
 import nz.kiwi.loomans.canyoudigit.components.TextureComponent;
 
-public class RenderingSystem extends IteratingSystem {
+public class CharacterRenderingSystem extends IteratingSystem {
     private ComponentMapper<PositionComponent> posMap;
     private ComponentMapper<AnimationComponent> aniMap;
     private ComponentMapper<TextureComponent> texMap;
     private ComponentMapper<MovingComponent> movMap;
 
-    private OrthographicCamera camera;
+    private CameraSystem cameraSystem;
     private int player;
     private HashMap<String, Animation<TextureRegion>> animations = new HashMap<String, Animation<TextureRegion>>();
     private HashMap<String, Texture> textures = new HashMap<String, Texture>();
@@ -38,18 +37,19 @@ public class RenderingSystem extends IteratingSystem {
     private static final float TILE_WIDTH = 128;
     private static final float TILE_HEIGHT = 64;
 
-    public RenderingSystem(OrthographicCamera cam) {
+    public CharacterRenderingSystem() {
         super(Aspect.all(PositionComponent.class, TextureComponent.class, MovingComponent.class));
-        camera = cam;
     }
 
     @Override
     protected void initialize() {
         player = world.create();
         PositionComponent pos = posMap.create(player);
+        AnimationComponent ani = aniMap.create(player);
         TextureComponent tex = texMap.create(player);
         MovingComponent mov = movMap.create(player);
 
+        ani.name = null;
         pos.position = new Vector2(0, 0);
         setPlayerTileCoords(0, 0);
         tex.dimensions = new Vector2(30, 60);
@@ -97,8 +97,8 @@ public class RenderingSystem extends IteratingSystem {
     @Override
     protected void begin() {
         super.begin();
-        camera.update();
-        sb.setProjectionMatrix(camera.combined);
+        cameraSystem.mapCamera.update();
+        sb.setProjectionMatrix(cameraSystem.mapCamera.combined);
         sb.begin();
     }
 
@@ -116,7 +116,7 @@ public class RenderingSystem extends IteratingSystem {
 
         stateTime += Gdx.graphics.getDeltaTime();
 
-        if (anim != null) {
+        if (anim != null && anim.name != null) {
             TextureRegion currentFrame = animations.get(anim.name).getKeyFrame(stateTime, true);
 
             sb.draw(

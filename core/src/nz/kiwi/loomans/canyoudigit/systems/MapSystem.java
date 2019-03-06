@@ -1,8 +1,6 @@
 package nz.kiwi.loomans.canyoudigit.systems;
 
 import com.artemis.BaseSystem;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
@@ -10,10 +8,9 @@ import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 public class MapSystem extends BaseSystem {
     public TiledMap map;
     private IsometricTiledMapRenderer renderer;
-    private OrthographicCamera camera;
+    private CameraSystem cameraSystem;
 
-    public MapSystem(OrthographicCamera cam) {
-        camera = cam;
+    public MapSystem() {
         map = new TmxMapLoader().load("maps/first.tmx");
         renderer = new IsometricTiledMapRenderer(map);
     }
@@ -21,6 +18,7 @@ public class MapSystem extends BaseSystem {
     @Override
     protected void initialize() {
         super.initialize();
+        cameraSystem.mapCamera.translate(getMapCentre(), 0);
     }
 
     @Override
@@ -32,12 +30,12 @@ public class MapSystem extends BaseSystem {
 
     @Override
     protected void processSystem() {
-        camera.update();
-        renderer.setView(camera);
+        cameraSystem.mapCamera.update();
+        renderer.setView(cameraSystem.mapCamera);
         renderer.render();
     }
 
-    public float getMapCentre() {
+    private float getMapCentre() {
         int mapWidth = map.getProperties().get("width", Integer.class);
         int tilePixelWidth = map.getProperties().get("tilewidth", Integer.class);
 
