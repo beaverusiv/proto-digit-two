@@ -30,7 +30,7 @@ public class MovingSystem extends IteratingSystem {
     private static final int PLAYER_DIM = 30;
     private static final float TILE_WIDTH = 128;
     private static final float TILE_HEIGHT = 64;
-    private static final float STEP_DURATION = 2f;
+    private static final float STEP_DURATION = 0.8f;
 
     @Override
     protected void initialize() {

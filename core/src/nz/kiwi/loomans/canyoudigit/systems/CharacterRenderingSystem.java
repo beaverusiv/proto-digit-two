@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import nz.kiwi.loomans.canyoudigit.components.AnimationComponent;
+import nz.kiwi.loomans.canyoudigit.components.EnergyComponent;
 import nz.kiwi.loomans.canyoudigit.components.MovingComponent;
 import nz.kiwi.loomans.canyoudigit.components.PositionComponent;
 import nz.kiwi.loomans.canyoudigit.components.TextureComponent;
@@ -23,6 +24,7 @@ public class CharacterRenderingSystem extends IteratingSystem {
     private ComponentMapper<AnimationComponent> aniMap;
     private ComponentMapper<TextureComponent> texMap;
     private ComponentMapper<MovingComponent> movMap;
+    private ComponentMapper<EnergyComponent> nrgMap;
 
     private CameraSystem cameraSystem;
     private int player;
@@ -48,6 +50,7 @@ public class CharacterRenderingSystem extends IteratingSystem {
         AnimationComponent ani = aniMap.create(player);
         TextureComponent tex = texMap.create(player);
         MovingComponent mov = movMap.create(player);
+        EnergyComponent e = nrgMap.create(player);
 
         ani.name = null;
         pos.position = new Vector2(0, 0);
@@ -56,6 +59,10 @@ public class CharacterRenderingSystem extends IteratingSystem {
         tex.origin = new Vector2(0, 0);
         tex.name = "player";
         mov.target = null;
+        e.level = 0;
+        e.max = 100;
+        e.lastIncrement = 0;
+        e.incrementInterval = 1;
         Texture texture = new Texture(Gdx.files.internal("sprites/char.png"));
         textures.put(tex.name, texture);
 

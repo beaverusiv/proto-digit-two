@@ -4,63 +4,59 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
+import com.badlogic.gdx.ai.fsm.StateMachine;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import nz.kiwi.loomans.canyoudigit.components.EnergyComponent;
 import nz.kiwi.loomans.canyoudigit.components.GuiComponent;
+import nz.kiwi.loomans.canyoudigit.stages.MapStage;
+import nz.kiwi.loomans.canyoudigit.stages.TreasureStage;
+import nz.kiwi.loomans.canyoudigit.states.GuiState;
 
 public class GuiRenderingSystem extends IteratingSystem {
+    public StateMachine<GuiRenderingSystem, GuiState> fsm;
     private ComponentMapper<GuiComponent> guiMap;
-    private CameraSystem cameraSystem;
+    private ComponentMapper<EnergyComponent> nrgMap;
 
-    private SpriteBatch sb = new SpriteBatch();
-    private Texture texture;
+    public HashMap<String, Stage> stages = new HashMap<String, Stage>();
+    private int player;
+    private AssetManager man;
 
-    public GuiRenderingSystem() {
+    public GuiRenderingSystem(int player, AssetManager manager) {
         super(Aspect.all(GuiComponent.class));
-        texture = new Texture(Gdx.files.internal("ui/uipack_rpg_sheet.png"));
+        fsm = new DefaultStateMachine<GuiRenderingSystem, GuiState>(this, GuiState.MAP);
+        this.player = player;
+        man = manager;
     }
 
     @Override
     protected void initialize() {
         super.initialize();
-        cameraSystem.hudCamera.setToOrtho(true);
         // creating dummy component to trigger processing
+        // TODO: figure out how to do this properly
         int gc = world.create();
         guiMap.create(gc);
+
+        EnergyComponent e = nrgMap.get(player);
+        stages.put("MAP", new MapStage(e, man));
+        stages.put("TREASURE", new TreasureStage(e, man));
     }
 
     @Override
     protected void process(int entityId) {
-        sb.draw(
-            texture,
-            0,
-            0,
-            0,
-            0,
-            192,
-            50
-        );
+        fsm.update();
     }
 
     @Override
     protected void dispose() {
         super.dispose();
-        texture.dispose();
-        sb.dispose();
-    }
-
-    @Override
-    protected void begin() {
-        super.begin();
-        sb.setProjectionMatrix(cameraSystem.hudCamera.combined);
-        cameraSystem.hudCamera.update();
-        sb.begin();
-    }
-
-    @Override
-    protected void end() {
-        super.end();
-        sb.end();
+        for (Map.Entry<String, Stage> item : stages.entrySet()) {
+            item.getValue().dispose();
+        }
     }
 }
