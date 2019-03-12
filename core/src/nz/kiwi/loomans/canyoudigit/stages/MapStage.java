@@ -1,6 +1,7 @@
 package nz.kiwi.loomans.canyoudigit.stages;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -11,14 +12,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 
 import nz.kiwi.loomans.canyoudigit.components.EnergyComponent;
+import nz.kiwi.loomans.canyoudigit.systems.GuiRenderingSystem;
 
 public class MapStage extends Stage {
+    private GuiRenderingSystem guiRenderingSystem;
     private Label energyLabel;
     private TextButton treasureButton;
     private EnergyComponent energyCmp;
     private Skin skin;
-
-    public boolean transitionToTreasure = false;
 
     public MapStage(EnergyComponent energyComponent, AssetManager manager) {
         manager.finishLoading();
@@ -34,12 +35,18 @@ public class MapStage extends Stage {
         addActor(energyLabel);
 
         treasureButton = new TextButton("Treasure", skin);
+        MapStage stage = this;
 
         treasureButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 System.out.println("Transition to TREASURE");
-                transitionToTreasure = true;
+                MessageManager.getInstance().dispatchMessage(
+                        0f,
+                        guiRenderingSystem,
+                        guiRenderingSystem,
+                        StageStates.TREASURE_CLICKED,
+                        null);
             }
         });
         addActor(treasureButton);

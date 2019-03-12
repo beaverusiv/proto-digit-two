@@ -3,9 +3,11 @@ package nz.kiwi.loomans.canyoudigit.systems;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.systems.IteratingSystem;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
 import com.badlogic.gdx.ai.fsm.StateMachine;
+import com.badlogic.gdx.ai.msg.MessageManager;
+import com.badlogic.gdx.ai.msg.Telegram;
+import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -18,7 +20,7 @@ import nz.kiwi.loomans.canyoudigit.stages.MapStage;
 import nz.kiwi.loomans.canyoudigit.stages.TreasureStage;
 import nz.kiwi.loomans.canyoudigit.states.GuiState;
 
-public class GuiRenderingSystem extends IteratingSystem {
+public class GuiRenderingSystem extends IteratingSystem implements Telegraph {
     public StateMachine<GuiRenderingSystem, GuiState> fsm;
     private ComponentMapper<GuiComponent> guiMap;
     private ComponentMapper<EnergyComponent> nrgMap;
@@ -49,7 +51,13 @@ public class GuiRenderingSystem extends IteratingSystem {
 
     @Override
     protected void process(int entityId) {
+        MessageManager.getInstance().update();
         fsm.update();
+    }
+
+    @Override
+    public boolean handleMessage(Telegram msg) {
+        return fsm.handleMessage(msg);
     }
 
     @Override
