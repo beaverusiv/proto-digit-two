@@ -124,17 +124,13 @@ public class MovingSystem extends IteratingSystem {
         p.position.y = actor.getY();
     }
 
-    private void setTileCoords(float x, float y, int entity) {
-        setTileCoords((int)x, (int)y, entity);
-    }
-
-    private void setTileCoords(int x, int y, int entity) {
+    void setTileCoords(int x, int y, int entity) {
         PositionComponent pos = posMap.get(entity);
         pos.position.x = ((x + y) * TILE_WIDTH / 2f) + ((TILE_WIDTH - PLAYER_DIM) / 2f);
         pos.position.y = ((x - y) * TILE_HEIGHT / 2f) + ((TILE_HEIGHT - PLAYER_DIM) / 2f);
     }
 
-    private Vector2 getTileCoords(int x, int y) {
+    Vector2 getTileCoords(int x, int y) {
         float x2 = x / TILE_WIDTH - y / TILE_HEIGHT;
         float y2 = y / TILE_HEIGHT + x / TILE_WIDTH;
 

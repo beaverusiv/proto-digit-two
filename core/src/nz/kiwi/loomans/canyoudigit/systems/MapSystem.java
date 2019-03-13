@@ -6,7 +6,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 
 public class MapSystem extends BaseSystem {
-    public TiledMap map;
+    TiledMap map;
     private IsometricTiledMapRenderer renderer;
     private CameraSystem cameraSystem;
 

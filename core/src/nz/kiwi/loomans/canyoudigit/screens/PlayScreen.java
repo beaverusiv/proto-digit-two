@@ -8,6 +8,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import nz.kiwi.loomans.canyoudigit.systems.CameraSystem;
@@ -17,6 +18,7 @@ import nz.kiwi.loomans.canyoudigit.systems.InputSystem;
 import nz.kiwi.loomans.canyoudigit.systems.MapSystem;
 import nz.kiwi.loomans.canyoudigit.systems.MovingSystem;
 import nz.kiwi.loomans.canyoudigit.systems.CharacterRenderingSystem;
+import nz.kiwi.loomans.canyoudigit.systems.PlayerSystem;
 
 public class PlayScreen implements Screen {
     private World world;
@@ -60,18 +62,17 @@ public class PlayScreen implements Screen {
     public void show() {
         SkinLoader.SkinParameter params = new SkinLoader.SkinParameter("ui/uiskin.atlas");
         manager.load("ui/uiskin.json", Skin.class, params);
-
-        CharacterRenderingSystem characterRenderingSystem = new CharacterRenderingSystem();
-
-        int player = characterRenderingSystem.getPlayer();
+        manager.load("sprites/char.png", Texture.class);
+        manager.finishLoading();
 
         WorldConfiguration config = new WorldConfigurationBuilder()
             .with(cameraSystem)
             .with(new MapSystem())
-            .with(characterRenderingSystem)
-            .with(new InputSystem(player))
+            .with(new PlayerSystem())
+            .with(new CharacterRenderingSystem(manager))
+            .with(new InputSystem())
             .with(new MovingSystem())
-            .with(new GuiRenderingSystem(player, manager))
+            .with(new GuiRenderingSystem(manager))
             .with(new EnergySystem())
             .build();
         world = new World(config);
