@@ -1,11 +1,9 @@
 package nz.kiwi.loomans.canyoudigit.states;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.msg.Telegram;
 
 import nz.kiwi.loomans.canyoudigit.stages.MapStage;
-import nz.kiwi.loomans.canyoudigit.stages.StageStates;
 import nz.kiwi.loomans.canyoudigit.stages.TreasureStage;
 import nz.kiwi.loomans.canyoudigit.systems.GuiRenderingSystem;
 
@@ -14,22 +12,25 @@ public enum GuiState implements State<GuiRenderingSystem> {
     MAP() {
         @Override
         public void enter(GuiRenderingSystem system) {
-            System.out.println("MAP entering");
             MapStage stage = (MapStage)system.stages.get("MAP");
-            Gdx.input.setInputProcessor(stage);
+            stage.enter();
+        }
+
+        @Override
+        public void exit(GuiRenderingSystem system) {
+            MapStage stage = (MapStage)system.stages.get("MAP");
+            stage.exit();
         }
 
         @Override
         public void update(GuiRenderingSystem system) {
-            System.out.println("MAP updating");
             MapStage stage = (MapStage)system.stages.get("MAP");
             stage.draw();
         }
 
         @Override
         public boolean onMessage(GuiRenderingSystem system, Telegram telegram) {
-            System.out.println("Handling message");
-            if (telegram.message == StageStates.TREASURE_CLICKED) {
+            if (telegram.message == GuiState.TREASURE.ordinal()) {
                 system.fsm.changeState(GuiState.TREASURE);
             }
             return false;
@@ -39,20 +40,28 @@ public enum GuiState implements State<GuiRenderingSystem> {
     TREASURE() {
         @Override
         public void enter(GuiRenderingSystem system) {
-            System.out.println("TREASURE entering");
             TreasureStage stage = (TreasureStage) system.stages.get("TREASURE");
-            stage.transitionToMap = false;
-            Gdx.input.setInputProcessor(stage);
+            stage.enter();
+        }
+
+        @Override
+        public void exit(GuiRenderingSystem system) {
+            TreasureStage stage = (TreasureStage)system.stages.get("TREASURE");
+            stage.exit();
         }
 
         @Override
         public void update(GuiRenderingSystem system) {
-            System.out.println("TREASURE updating");
             TreasureStage stage = (TreasureStage)system.stages.get("TREASURE");
             stage.draw();
-            if (stage.transitionToMap) {
+        }
+
+        @Override
+        public boolean onMessage(GuiRenderingSystem system, Telegram telegram) {
+            if (telegram.message == GuiState.MAP.ordinal()) {
                 system.fsm.changeState(GuiState.MAP);
             }
+            return false;
         }
     };
 

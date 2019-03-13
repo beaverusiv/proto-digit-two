@@ -24,6 +24,7 @@ public class GuiRenderingSystem extends IteratingSystem implements Telegraph {
     public StateMachine<GuiRenderingSystem, GuiState> fsm;
     private ComponentMapper<GuiComponent> guiMap;
     private ComponentMapper<EnergyComponent> nrgMap;
+    private InputSystem inputSystem;
 
     public HashMap<String, Stage> stages = new HashMap<String, Stage>();
     private int player;
@@ -43,10 +44,11 @@ public class GuiRenderingSystem extends IteratingSystem implements Telegraph {
         // TODO: figure out how to do this properly
         int gc = world.create();
         guiMap.create(gc);
+        man.finishLoading();
 
         EnergyComponent e = nrgMap.get(player);
-        stages.put("MAP", new MapStage(e, man));
-        stages.put("TREASURE", new TreasureStage(e, man));
+        stages.put("MAP", new MapStage(e, man.get("ui/uiskin.json"), this, inputSystem));
+        stages.put("TREASURE", new TreasureStage(e, man.get("ui/uiskin.json"), this, inputSystem));
     }
 
     @Override

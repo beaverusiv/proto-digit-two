@@ -1,9 +1,7 @@
 package nz.kiwi.loomans.canyoudigit.stages;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -11,20 +9,19 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 
 import nz.kiwi.loomans.canyoudigit.components.EnergyComponent;
+import nz.kiwi.loomans.canyoudigit.states.GuiState;
+import nz.kiwi.loomans.canyoudigit.systems.GuiRenderingSystem;
+import nz.kiwi.loomans.canyoudigit.systems.InputSystem;
 
-public class TreasureStage extends Stage {
+public class TreasureStage extends BaseStage {
     private Label energyLabel;
     private TextButton treasureButton;
     private EnergyComponent energyCmp;
-    private Skin skin;
 
-    public boolean transitionToMap = false;
-
-    public TreasureStage(EnergyComponent energyComponent, AssetManager manager) {
-        manager.finishLoading();
+    public TreasureStage(EnergyComponent energyComponent, Skin skin, GuiRenderingSystem guiRenderingSystem, InputSystem inputSystem) {
+        this.guiRenderingSystem = guiRenderingSystem;
+        this.inputSystem = inputSystem;
         energyCmp = energyComponent;
-        skin = manager.get("ui/uiskin.json");
-        // TODO: figure out how to set input processing for hud and map
 
         energyLabel = new Label("Energy Label", skin);
         energyLabel.setSize(Gdx.graphics.getWidth(),50);
@@ -37,8 +34,7 @@ public class TreasureStage extends Stage {
         treasureButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                System.out.println("Transition to MAP");
-                transitionToMap = true;
+            sendMessage(GuiState.MAP.ordinal());
             }
         });
         addActor(treasureButton);

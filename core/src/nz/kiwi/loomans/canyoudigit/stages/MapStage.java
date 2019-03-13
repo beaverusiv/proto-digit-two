@@ -1,10 +1,7 @@
 package nz.kiwi.loomans.canyoudigit.stages;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.ai.msg.MessageManager;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -12,21 +9,19 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 
 import nz.kiwi.loomans.canyoudigit.components.EnergyComponent;
+import nz.kiwi.loomans.canyoudigit.states.GuiState;
 import nz.kiwi.loomans.canyoudigit.systems.GuiRenderingSystem;
+import nz.kiwi.loomans.canyoudigit.systems.InputSystem;
 
-public class MapStage extends Stage {
-    private GuiRenderingSystem guiRenderingSystem;
+public class MapStage extends BaseStage {
     private Label energyLabel;
     private TextButton treasureButton;
     private EnergyComponent energyCmp;
-    private Skin skin;
 
-    public MapStage(EnergyComponent energyComponent, AssetManager manager) {
-        manager.finishLoading();
+    public MapStage(EnergyComponent energyComponent, Skin skin, GuiRenderingSystem guiRenderingSystem, InputSystem inputSystem) {
+        this.guiRenderingSystem = guiRenderingSystem;
+        this.inputSystem = inputSystem;
         energyCmp = energyComponent;
-        skin = manager.get("ui/uiskin.json");
-        // TODO: figure out how to set input processing for hud and map
-        Gdx.input.setInputProcessor(this);
 
         energyLabel = new Label("Energy Label", skin);
         energyLabel.setSize(Gdx.graphics.getWidth(),50);
@@ -35,21 +30,17 @@ public class MapStage extends Stage {
         addActor(energyLabel);
 
         treasureButton = new TextButton("Treasure", skin);
-        MapStage stage = this;
 
         treasureButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                System.out.println("Transition to TREASURE");
-                MessageManager.getInstance().dispatchMessage(
-                        0f,
-                        guiRenderingSystem,
-                        guiRenderingSystem,
-                        StageStates.TREASURE_CLICKED,
-                        null);
+            sendMessage(GuiState.TREASURE.ordinal());
             }
         });
         addActor(treasureButton);
+
+        // This is the default stage
+        this.enter();
     }
 
     public void draw() {

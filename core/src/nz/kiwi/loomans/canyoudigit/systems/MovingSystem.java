@@ -60,7 +60,6 @@ public class MovingSystem extends IteratingSystem {
         }
         Actor actor = actors.get(key);
         if (a.name == null) {
-            System.out.println("Checking movement");
             Vector2 v = getTileCoords((int) p.position.x, ((int) p.position.y) * -1);
             if (v.x < m.target.x) {
                 a.name = "walk_right";
@@ -69,7 +68,6 @@ public class MovingSystem extends IteratingSystem {
                                 Actions.moveTo(p.position.x + TILE_WIDTH / 2f, p.position.y + TILE_HEIGHT / 2f, STEP_DURATION),
                                 run(new Runnable() {
                                     public void run() {
-                                        System.out.println("Done with movement");
                                         a.name = null;
                                     }
                                 })
@@ -82,7 +80,6 @@ public class MovingSystem extends IteratingSystem {
                                 Actions.moveTo(p.position.x - TILE_WIDTH / 2f, p.position.y - TILE_HEIGHT / 2f, STEP_DURATION),
                                 run(new Runnable() {
                                     public void run() {
-                                        System.out.println("Done with movement");
                                         a.name = null;
                                     }
                                 })
@@ -95,7 +92,6 @@ public class MovingSystem extends IteratingSystem {
                                 Actions.moveTo(p.position.x + TILE_WIDTH / 2f, p.position.y - TILE_HEIGHT / 2f, STEP_DURATION),
                                 run(new Runnable() {
                                     public void run() {
-                                        System.out.println("Done with movement");
                                         a.name = null;
                                     }
                                 })
@@ -108,7 +104,6 @@ public class MovingSystem extends IteratingSystem {
                                 Actions.moveTo(p.position.x - TILE_WIDTH / 2f, p.position.y + TILE_HEIGHT / 2f, STEP_DURATION),
                                 run(new Runnable() {
                                     public void run() {
-                                        System.out.println("Done with movement");
                                         a.name = null;
                                     }
                                 })

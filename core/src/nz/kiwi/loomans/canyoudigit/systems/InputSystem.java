@@ -4,6 +4,7 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 
@@ -15,6 +16,7 @@ public class InputSystem extends IteratingSystem implements InputProcessor {
     private ComponentMapper<InputComponent> inputMap;
     private ComponentMapper<PositionComponent> posMap;
     private ComponentMapper<MovingComponent> moveMap;
+    public InputMultiplexer inputMultiplexer = new InputMultiplexer();
     private int player;
 
     private static final int PLAYER_DIM = 30;
@@ -23,7 +25,8 @@ public class InputSystem extends IteratingSystem implements InputProcessor {
 
     public InputSystem(int player) {
         super(Aspect.all(InputComponent.class, PositionComponent.class, MovingComponent.class));
-        Gdx.input.setInputProcessor(this);
+        inputMultiplexer.addProcessor(this);
+        Gdx.input.setInputProcessor(inputMultiplexer);
         this.player = player;
     }
 
