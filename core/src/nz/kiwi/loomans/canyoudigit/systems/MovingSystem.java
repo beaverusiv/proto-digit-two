@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import java.util.HashMap;
 
 import nz.kiwi.loomans.canyoudigit.components.AnimationComponent;
+import nz.kiwi.loomans.canyoudigit.components.EnergyComponent;
 import nz.kiwi.loomans.canyoudigit.components.MovingComponent;
 import nz.kiwi.loomans.canyoudigit.components.PositionComponent;
 
@@ -22,9 +23,11 @@ public class MovingSystem extends IteratingSystem {
     private ComponentMapper<PositionComponent> posMap;
     private ComponentMapper<MovingComponent> moveMap;
     private ComponentMapper<AnimationComponent> aniMap;
+    private ComponentMapper<EnergyComponent> energyComponentMap;
     private HashMap<String, Actor> actors = new HashMap<String, Actor>();
 
     private MapSystem mapSystem;
+    private PlayerSystem playerSystem;
     private TiledMapTileLayer layer;
 
     private static final int PLAYER_DIM = 30;
@@ -45,6 +48,7 @@ public class MovingSystem extends IteratingSystem {
 
     @Override
     protected void process(int entityId) {
+        // TODO: these different scenarios should be handled by the entity fsm (player system or npc system)
         float deltaTime = Gdx.graphics.getDeltaTime();
 
         final MovingComponent m = moveMap.get(entityId);
@@ -59,63 +63,68 @@ public class MovingSystem extends IteratingSystem {
             actors.get(key).setPosition(p.position.x, p.position.y);
         }
         Actor actor = actors.get(key);
-        if (a.name == null) {
+        if (!a.running) {
             Vector2 v = getTileCoords((int) p.position.x, ((int) p.position.y) * -1);
             if (v.x < m.target.x) {
                 a.name = "walk_right";
+                a.running = true;
                 actor.addAction(
                         sequence(
                                 Actions.moveTo(p.position.x + TILE_WIDTH / 2f, p.position.y + TILE_HEIGHT / 2f, STEP_DURATION),
                                 run(new Runnable() {
                                     public void run() {
-                                        a.name = null;
+                                        a.running = false;
                                     }
                                 })
                         )
                 );
             } else if (v.x > m.target.x) {
                 a.name = "walk_left";
+                a.running = true;
                 actor.addAction(
                         sequence(
                                 Actions.moveTo(p.position.x - TILE_WIDTH / 2f, p.position.y - TILE_HEIGHT / 2f, STEP_DURATION),
                                 run(new Runnable() {
                                     public void run() {
-                                        a.name = null;
+                                        a.running = false;
                                     }
                                 })
                         )
                 );
             } else if (v.y < m.target.y) {
                 a.name = "walk_down";
+                a.running = true;
                 actor.addAction(
                         sequence(
                                 Actions.moveTo(p.position.x + TILE_WIDTH / 2f, p.position.y - TILE_HEIGHT / 2f, STEP_DURATION),
                                 run(new Runnable() {
                                     public void run() {
-                                        a.name = null;
+                                        a.running = false;
                                     }
                                 })
                         )
                 );
             } else if (v.y > m.target.y) {
                 a.name = "walk_up";
+                a.running = true;
                 actor.addAction(
                         sequence(
                                 Actions.moveTo(p.position.x - TILE_WIDTH / 2f, p.position.y + TILE_HEIGHT / 2f, STEP_DURATION),
                                 run(new Runnable() {
                                     public void run() {
-                                        a.name = null;
+                                        a.running = false;
                                     }
                                 })
                         )
                 );
             } else if (v.x == m.target.x && v.y == m.target.y) {
                 TiledMapTileLayer.Cell cell = layer.getCell((int)m.target.y, (int)m.target.x);
-                if (cell != null) {
+                if (cell != null && cell.getRotation() != 1) {
                     cell.setRotation(1);
+                    energyComponentMap.get(playerSystem.player).level -= 20;
                 }
                 m.target = null;
-                a.name = null;
+                a.running = false;
             }
         }
 

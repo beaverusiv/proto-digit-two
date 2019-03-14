@@ -57,7 +57,7 @@ public class CharacterRenderingSystem extends IteratingSystem {
 
         stateTime += Gdx.graphics.getDeltaTime();
 
-        if (anim != null && anim.name != null) {
+        if (anim != null && anim.name != null && anim.running) {
             TextureRegion currentFrame = assetSystem.animations.get(anim.name).getKeyFrame(stateTime, true);
 
             sb.draw(
