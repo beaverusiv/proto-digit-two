@@ -1,13 +1,16 @@
-package nz.kiwi.loomans.canyoudigit;
+package nz.kiwi.loomans.canyoudigit.systems;
 
+import com.artemis.BaseSystem;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.assets.loaders.SkinLoader.SkinParameter;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
-public class AssetManager {
-    public final com.badlogic.gdx.assets.AssetManager manager = new com.badlogic.gdx.assets.AssetManager();
+public class AssetSystem extends BaseSystem {
+    public final AssetManager manager = new AssetManager();
 
     // Sounds
     public final String boingSound = "sounds/boing.wav";
@@ -25,6 +28,7 @@ public class AssetManager {
 
     public void queueAddImages(){
         manager.load(gameImages, TextureAtlas.class);
+        manager.load("sprites/char.png", Texture.class);
     }
 
     public void queueAddLoadingImages(){
@@ -41,7 +45,7 @@ public class AssetManager {
     }
 
     public void queueAddSkin(){
-        SkinParameter params = new SkinParameter("ui/uiskin.atlas");
+        SkinLoader.SkinParameter params = new SkinLoader.SkinParameter("ui/uiskin.atlas");
         manager.load(skin, Skin.class, params);
     }
 
@@ -49,5 +53,10 @@ public class AssetManager {
     }
 
     public void queueAddParticleEffects(){
+    }
+
+    @Override
+    protected void processSystem() {
+        // TODO: maybe some background loading or memory management?
     }
 }

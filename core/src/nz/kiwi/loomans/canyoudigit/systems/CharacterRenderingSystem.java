@@ -4,7 +4,6 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -22,7 +21,7 @@ public class CharacterRenderingSystem extends IteratingSystem {
     private ComponentMapper<TextureComponent> texMap;
 
     private CameraSystem cameraSystem;
-    private AssetManager assetManager;
+    private AssetSystem assetSystem;
     private HashMap<String, Animation<TextureRegion>> animations = new HashMap<String, Animation<TextureRegion>>();
     private SpriteBatch sb = new SpriteBatch();
     private float stateTime = 0f;
@@ -30,15 +29,14 @@ public class CharacterRenderingSystem extends IteratingSystem {
     private static final int FRAME_COLS = 4;
     private static final int FRAME_ROWS = 4;
 
-    public CharacterRenderingSystem(AssetManager assetManager) {
+    public CharacterRenderingSystem() {
         super(Aspect.all(PositionComponent.class, TextureComponent.class, AnimationComponent.class));
-        this.assetManager = assetManager;
     }
 
     @Override
     protected void initialize() {
         // TODO: move to asset system and load via asset manager
-        Texture texture = assetManager.get("sprites/char.png");
+        Texture texture = assetSystem.manager.get("sprites/char.png");
         TextureRegion[][] tmp = TextureRegion.split(texture,
                 texture.getWidth() / FRAME_COLS,
                 texture.getHeight() / FRAME_ROWS);
@@ -103,7 +101,7 @@ public class CharacterRenderingSystem extends IteratingSystem {
             );
         } else {
             sb.draw(
-                assetManager.get(tex.name),
+                assetSystem.manager.get(tex.name),
                 pos.position.x,
                 pos.position.y,
                 (int)tex.origin.x,

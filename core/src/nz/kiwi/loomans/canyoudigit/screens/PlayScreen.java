@@ -5,12 +5,10 @@ import com.artemis.WorldConfiguration;
 import com.artemis.WorldConfigurationBuilder;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
+import nz.kiwi.loomans.canyoudigit.CanYouDigIt;
+import nz.kiwi.loomans.canyoudigit.systems.AssetSystem;
 import nz.kiwi.loomans.canyoudigit.systems.CameraSystem;
 import nz.kiwi.loomans.canyoudigit.systems.EnergySystem;
 import nz.kiwi.loomans.canyoudigit.systems.GuiRenderingSystem;
@@ -24,7 +22,11 @@ public class PlayScreen implements Screen {
     private World world;
     private CameraSystem cameraSystem = new CameraSystem();
 
-    private final AssetManager manager = new AssetManager();
+    private final AssetSystem assetSystem;
+
+    public PlayScreen(CanYouDigIt game) {
+        assetSystem = game.assetSystem;
+    }
 
     @Override
     public void pause() {
@@ -60,19 +62,15 @@ public class PlayScreen implements Screen {
 
     @Override
     public void show() {
-        SkinLoader.SkinParameter params = new SkinLoader.SkinParameter("ui/uiskin.atlas");
-        manager.load("ui/uiskin.json", Skin.class, params);
-        manager.load("sprites/char.png", Texture.class);
-        manager.finishLoading();
-
         WorldConfiguration config = new WorldConfigurationBuilder()
             .with(cameraSystem)
+            .with(assetSystem)
             .with(new MapSystem())
             .with(new PlayerSystem())
-            .with(new CharacterRenderingSystem(manager))
+            .with(new CharacterRenderingSystem())
             .with(new InputSystem())
             .with(new MovingSystem())
-            .with(new GuiRenderingSystem(manager))
+            .with(new GuiRenderingSystem())
             .with(new EnergySystem())
             .build();
         world = new World(config);

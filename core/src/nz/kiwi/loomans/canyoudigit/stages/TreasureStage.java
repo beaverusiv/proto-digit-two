@@ -1,25 +1,27 @@
 package nz.kiwi.loomans.canyoudigit.stages;
 
+import com.artemis.ComponentMapper;
 import com.artemis.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 
 import nz.kiwi.loomans.canyoudigit.components.EnergyComponent;
 import nz.kiwi.loomans.canyoudigit.states.GuiState;
+import nz.kiwi.loomans.canyoudigit.systems.PlayerSystem;
 
 public class TreasureStage extends BaseStage {
+    private PlayerSystem playerSystem;
+    private ComponentMapper<EnergyComponent> nrgMap;
+
     private Label energyLabel;
     private TextButton treasureButton;
-    private EnergyComponent energyCmp;
 
-    public TreasureStage(World world, EnergyComponent energyComponent, Skin skin) {
+    public TreasureStage(World world) {
         super(world);
-        energyCmp = energyComponent;
 
         energyLabel = new Label("Energy Label", skin);
         energyLabel.setSize(Gdx.graphics.getWidth(),50);
@@ -39,6 +41,7 @@ public class TreasureStage extends BaseStage {
     }
 
     public void draw() {
+        EnergyComponent energyCmp = nrgMap.get(playerSystem.player);
         energyLabel.setText(energyCmp.level + "/" + energyCmp.max);
         super.draw();
     }

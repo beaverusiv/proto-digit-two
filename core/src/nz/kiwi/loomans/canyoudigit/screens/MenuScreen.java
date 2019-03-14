@@ -24,9 +24,9 @@ public class MenuScreen implements Screen {
         parent = game;
         stage = new Stage(new ScreenViewport());
 
-        parent.assMan.queueAddSkin();
-        parent.assMan.manager.finishLoading();
-        skin = parent.assMan.manager.get("ui/uiskin.json");
+        parent.assetSystem.queueAddSkin();
+        parent.assetSystem.manager.finishLoading();
+        skin = parent.assetSystem.manager.get("ui/uiskin.json");
     }
 
     @Override

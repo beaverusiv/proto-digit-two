@@ -15,7 +15,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import nz.kiwi.loomans.canyoudigit.CanYouDigIt;
 import nz.kiwi.loomans.canyoudigit.LoadingBarPart;
-import nz.kiwi.loomans.canyoudigit.states.GameState;
 
 public class LoadingScreen implements Screen {
     private CanYouDigIt parent;
@@ -27,24 +26,25 @@ public class LoadingScreen implements Screen {
     private Stage stage;
     private Table table;
 
-    public float countDown = 5.1f;
+    private float countDown = 5.1f;
 
-    public final int IMAGE = 0;
-    public final int FONT = 1;
-    public final int PARTY = 2;
-    public final int SOUND = 3;
-    public final int MUSIC = 4;
+    private final int IMAGE = 1;
+    private final int FONT = 2;
+    private final int PARTY = 3;
+    private final int SOUND = 4;
+    private final int MUSIC = 5;
+    private final int DONE_LOADING = 6;
 
     public LoadingScreen(CanYouDigIt game) {
         parent = game;
         stage = new Stage(new ScreenViewport());
 
         // load loading images and wait until finished
-        parent.assMan.queueAddLoadingImages();
-        parent.assMan.manager.finishLoading();
+        parent.assetSystem.queueAddLoadingImages();
+        parent.assetSystem.manager.finishLoading();
 
         // get images used to display loading progress
-        atlas = parent.assMan.manager.get("images/loading.atlas");
+        atlas = parent.assetSystem.manager.get("images/loading.atlas");
         title = atlas.findRegion("staying-alight-logo");
         dash = atlas.findRegion("loading-dash");
         flameAnimation = new Animation<TextureRegion>(0.07f, atlas.findRegions("flames/flames"), Animation.PlayMode.LOOP);
@@ -71,9 +71,11 @@ public class LoadingScreen implements Screen {
         loadingTable.add(new LoadingBarPart(dash,flameAnimation));
         loadingTable.add(new LoadingBarPart(dash,flameAnimation));
         loadingTable.add(new LoadingBarPart(dash,flameAnimation));
+        loadingTable.add(new LoadingBarPart(dash,flameAnimation));
+        loadingTable.add(new LoadingBarPart(dash,flameAnimation));
 
 
-        table.add(titleImage).align(Align.center).pad(10, 0, 0, 0).colspan(10);
+        table.add(titleImage).align(Align.center).pad(10, 0, 0, 0).colspan(12);
         table.row(); // move to next row
         table.add(loadingTable).width(400);
 
@@ -86,38 +88,35 @@ public class LoadingScreen implements Screen {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if (parent.assMan.manager.update()) {
+        if (parent.assetSystem.manager.update()) {
             currentLoadingStage+= 1;
-            if(currentLoadingStage <= 5){
+            if(currentLoadingStage <= DONE_LOADING){
                 loadingTable.getCells().get((currentLoadingStage-1)*2).getActor().setVisible(true);
                 loadingTable.getCells().get((currentLoadingStage-1)*2+1).getActor().setVisible(true);
             }
             switch(currentLoadingStage){
+                case IMAGE:
+                    parent.assetSystem.queueAddImages();
                 case FONT:
-                    System.out.println("Loading fonts....");
-                    parent.assMan.queueAddFonts();
+                    parent.assetSystem.queueAddFonts();
                     break;
                 case PARTY:
-                    System.out.println("Loading Particle Effects....");
-                    parent.assMan.queueAddParticleEffects();
+                    parent.assetSystem.queueAddParticleEffects();
                     break;
                 case SOUND:
-                    System.out.println("Loading Sounds....");
-                    parent.assMan.queueAddSounds();
+                    parent.assetSystem.queueAddSounds();
                     break;
                 case MUSIC:
-                    System.out.println("Loading fonts....");
-                    parent.assMan.queueAddMusic();
+                    parent.assetSystem.queueAddMusic();
                     break;
-                case 5:
-                    System.out.println("Finished");
+                case DONE_LOADING:
                     break;
             }
-            if (currentLoadingStage >5){
+            if (currentLoadingStage > DONE_LOADING){
                 countDown -= delta;
-                currentLoadingStage = 5;
+                currentLoadingStage = DONE_LOADING;
                 if(countDown < 0){
-                    MessageManager.getInstance().dispatchMessage(null, this.parent.fsm, 0);
+                    MessageManager.getInstance().dispatchMessage(null, this.parent.fsm, DONE_LOADING);
                 }
             }
         }

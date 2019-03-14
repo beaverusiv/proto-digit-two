@@ -1,12 +1,10 @@
 package nz.kiwi.loomans.canyoudigit.systems;
 
-import com.artemis.Aspect;
+import com.artemis.BaseSystem;
 import com.artemis.ComponentMapper;
-import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
 import com.badlogic.gdx.ai.fsm.StateMachine;
 import com.badlogic.gdx.ai.msg.MessageManager;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.HashMap;
@@ -18,41 +16,34 @@ import nz.kiwi.loomans.canyoudigit.stages.MapStage;
 import nz.kiwi.loomans.canyoudigit.stages.TreasureStage;
 import nz.kiwi.loomans.canyoudigit.states.GuiState;
 
-public class GuiRenderingSystem extends IteratingSystem {
+public class GuiRenderingSystem extends BaseSystem {
     public StateMachine<GuiRenderingSystem, GuiState> fsm;
     private ComponentMapper<GuiComponent> guiMap;
     private ComponentMapper<EnergyComponent> nrgMap;
     private InputSystem inputSystem;
     private PlayerSystem playerSystem;
+    private AssetSystem assetSystem;
 
-    public HashMap<String, Stage> stages = new HashMap<String, Stage>();
-    private AssetManager man;
+    public HashMap<String, Stage> stages = new HashMap<>();
 
-    public GuiRenderingSystem(AssetManager manager) {
-        super(Aspect.all(GuiComponent.class));
-        fsm = new DefaultStateMachine<GuiRenderingSystem, GuiState>(this, GuiState.MAP);
-        man = manager;
+    public GuiRenderingSystem() {
+        fsm = new DefaultStateMachine<>(this, GuiState.MAP);
     }
 
     @Override
     protected void initialize() {
         super.initialize();
-        // creating dummy component to trigger processing
-        // TODO: figure out how to do this properly
-        int gc = world.create();
-        guiMap.create(gc);
-
         EnergyComponent e = nrgMap.get(playerSystem.player);
-        MapStage mapStage = new MapStage(world, e, man.get("ui/uiskin.json"));
+        MapStage mapStage = new MapStage(world);
         stages.put("MAP", mapStage);
-        stages.put("TREASURE", new TreasureStage(world, e, man.get("ui/uiskin.json")));
+        stages.put("TREASURE", new TreasureStage(world));
 
         // initialise initial stage
         mapStage.enter();
     }
 
     @Override
-    protected void process(int entityId) {
+    protected void processSystem() {
         MessageManager.getInstance().update();
         fsm.update();
     }

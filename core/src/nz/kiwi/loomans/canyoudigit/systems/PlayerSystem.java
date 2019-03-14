@@ -11,7 +11,7 @@ import nz.kiwi.loomans.canyoudigit.components.PositionComponent;
 import nz.kiwi.loomans.canyoudigit.components.TextureComponent;
 
 public class PlayerSystem extends BaseSystem {
-    int player;
+    public int player;
     private ComponentMapper<PositionComponent> posMap;
     private ComponentMapper<AnimationComponent> aniMap;
     private ComponentMapper<TextureComponent> texMap;
@@ -44,5 +44,6 @@ public class PlayerSystem extends BaseSystem {
 
     @Override
     protected void processSystem() {
+        // TODO: fsm?
     }
 }

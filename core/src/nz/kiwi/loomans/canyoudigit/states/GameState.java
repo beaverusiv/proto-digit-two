@@ -46,7 +46,7 @@ public enum GameState implements State<CanYouDigIt> {
         @Override
         public void enter(CanYouDigIt game) {
             if(game.playScreen == null) {
-                game.playScreen = new PlayScreen();
+                game.playScreen = new PlayScreen(game);
             }
             game.setScreen(game.playScreen);
         }

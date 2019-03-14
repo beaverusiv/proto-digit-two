@@ -9,21 +9,22 @@ import com.badlogic.gdx.audio.Music;
 import nz.kiwi.loomans.canyoudigit.screens.MenuScreen;
 import nz.kiwi.loomans.canyoudigit.screens.PlayScreen;
 import nz.kiwi.loomans.canyoudigit.states.GameState;
+import nz.kiwi.loomans.canyoudigit.systems.AssetSystem;
 
 public class CanYouDigIt extends Game {
     public StateMachine<CanYouDigIt, GameState> fsm;
 	public MenuScreen menuScreen;
 	public PlayScreen playScreen;
-	public AssetManager assMan = new AssetManager();
+	public AssetSystem assetSystem = new AssetSystem();
 	private Music playingSong;
 
 	@Override
 	public void create () {
 	    fsm = new DefaultStateMachine<>(this, GameState.LOADING);
 
-		assMan.queueAddMusic();
-		assMan.manager.finishLoading();
-		playingSong = assMan.manager.get("sounds/Rolemusic_-_pl4y1ng.mp3");
+		assetSystem.queueAddMusic();
+		assetSystem.manager.finishLoading();
+		playingSong = assetSystem.manager.get("sounds/Rolemusic_-_pl4y1ng.mp3");
 
 		playingSong.play();
 	}
@@ -39,6 +40,6 @@ public class CanYouDigIt extends Game {
 	public void dispose () {
 		super.dispose();
 		playingSong.dispose();
-		assMan.manager.dispose();
+		assetSystem.manager.dispose();
 	}
 }
