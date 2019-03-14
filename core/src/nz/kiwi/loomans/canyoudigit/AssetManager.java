@@ -1,0 +1,53 @@
+package nz.kiwi.loomans.canyoudigit;
+
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.assets.loaders.SkinLoader.SkinParameter;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
+public class AssetManager {
+    public final com.badlogic.gdx.assets.AssetManager manager = new com.badlogic.gdx.assets.AssetManager();
+
+    // Sounds
+    public final String boingSound = "sounds/boing.wav";
+    public final String pingSound = "sounds/ping.wav";
+
+    // Music
+    public final String playingSong = "sounds/Rolemusic_-_pl4y1ng.mp3";
+
+    // Skin
+    public final String skin = "ui/uiskin.json";
+
+    // Textures
+    public final String gameImages = "images/game.atlas";
+    public final String loadingImages = "images/loading.atlas";
+
+    public void queueAddImages(){
+        manager.load(gameImages, TextureAtlas.class);
+    }
+
+    public void queueAddLoadingImages(){
+        manager.load(loadingImages, TextureAtlas.class);
+    }
+
+    public void queueAddSounds(){
+        manager.load(boingSound, Sound.class);
+        manager.load(pingSound, Sound.class);
+    }
+
+    public void queueAddMusic(){
+        manager.load(playingSong, Music.class);
+    }
+
+    public void queueAddSkin(){
+        SkinParameter params = new SkinParameter("ui/uiskin.atlas");
+        manager.load(skin, Skin.class, params);
+    }
+
+    public void queueAddFonts(){
+    }
+
+    public void queueAddParticleEffects(){
+    }
+}

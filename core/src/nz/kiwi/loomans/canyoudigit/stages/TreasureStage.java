@@ -1,5 +1,6 @@
 package nz.kiwi.loomans.canyoudigit.stages;
 
+import com.artemis.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -10,17 +11,14 @@ import com.badlogic.gdx.utils.Align;
 
 import nz.kiwi.loomans.canyoudigit.components.EnergyComponent;
 import nz.kiwi.loomans.canyoudigit.states.GuiState;
-import nz.kiwi.loomans.canyoudigit.systems.GuiRenderingSystem;
-import nz.kiwi.loomans.canyoudigit.systems.InputSystem;
 
 public class TreasureStage extends BaseStage {
     private Label energyLabel;
     private TextButton treasureButton;
     private EnergyComponent energyCmp;
 
-    public TreasureStage(EnergyComponent energyComponent, Skin skin, GuiRenderingSystem guiRenderingSystem, InputSystem inputSystem) {
-        this.guiRenderingSystem = guiRenderingSystem;
-        this.inputSystem = inputSystem;
+    public TreasureStage(World world, EnergyComponent energyComponent, Skin skin) {
+        super(world);
         energyCmp = energyComponent;
 
         energyLabel = new Label("Energy Label", skin);

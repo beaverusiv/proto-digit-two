@@ -6,8 +6,6 @@ import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
 import com.badlogic.gdx.ai.fsm.StateMachine;
 import com.badlogic.gdx.ai.msg.MessageManager;
-import com.badlogic.gdx.ai.msg.Telegram;
-import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -20,7 +18,7 @@ import nz.kiwi.loomans.canyoudigit.stages.MapStage;
 import nz.kiwi.loomans.canyoudigit.stages.TreasureStage;
 import nz.kiwi.loomans.canyoudigit.states.GuiState;
 
-public class GuiRenderingSystem extends IteratingSystem implements Telegraph {
+public class GuiRenderingSystem extends IteratingSystem {
     public StateMachine<GuiRenderingSystem, GuiState> fsm;
     private ComponentMapper<GuiComponent> guiMap;
     private ComponentMapper<EnergyComponent> nrgMap;
@@ -45,19 +43,18 @@ public class GuiRenderingSystem extends IteratingSystem implements Telegraph {
         guiMap.create(gc);
 
         EnergyComponent e = nrgMap.get(playerSystem.player);
-        stages.put("MAP", new MapStage(e, man.get("ui/uiskin.json"), this, inputSystem));
-        stages.put("TREASURE", new TreasureStage(e, man.get("ui/uiskin.json"), this, inputSystem));
+        MapStage mapStage = new MapStage(world, e, man.get("ui/uiskin.json"));
+        stages.put("MAP", mapStage);
+        stages.put("TREASURE", new TreasureStage(world, e, man.get("ui/uiskin.json")));
+
+        // initialise initial stage
+        mapStage.enter();
     }
 
     @Override
     protected void process(int entityId) {
         MessageManager.getInstance().update();
         fsm.update();
-    }
-
-    @Override
-    public boolean handleMessage(Telegram msg) {
-        return fsm.handleMessage(msg);
     }
 
     @Override
