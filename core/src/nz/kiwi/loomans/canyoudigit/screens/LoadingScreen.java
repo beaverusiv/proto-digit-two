@@ -101,7 +101,7 @@ public class LoadingScreen implements Screen {
                     parent.assetSystem.queueAddFonts();
                     break;
                 case PARTY:
-                    parent.assetSystem.queueAddParticleEffects();
+                    parent.assetSystem.queueAddAnimations();
                     break;
                 case SOUND:
                     parent.assetSystem.queueAddSounds();
