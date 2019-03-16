@@ -33,7 +33,7 @@ public class PlayerSystem extends BaseSystem {
         pos.position = new Vector2(0, 0);
         tex.dimensions = new Vector2(30, 60);
         tex.origin = new Vector2(0, 0);
-        tex.name = "sprites/char.png";
+        tex.name = "atlas/sprites.png";
         mov.target = null;
         e.level = 0;
         e.max = 100;

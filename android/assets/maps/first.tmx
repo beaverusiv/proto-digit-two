@@ -1,20 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="isometric" renderorder="right-down" width="10" height="10" tilewidth="128" tileheight="64" infinite="0" nextlayerid="2" nextobjectid="1">
+<map version="1.2" tiledversion="1.2.1" orientation="isometric" renderorder="right-down" width="10" height="10" tilewidth="128" tileheight="64" infinite="0" nextlayerid="3" nextobjectid="1">
  <tileset firstgid="1" name="Base" tilewidth="128" tileheight="64" tilecount="96" columns="8">
   <image source="seasons_tiles.png" width="1024" height="768"/>
  </tileset>
  <layer id="1" name="Tile Layer 1" width="10" height="10">
   <data encoding="csv">
-50,94,94,94,94,94,94,94,94,50,
-94,1,94,94,94,94,94,94,1,94,
-94,94,73,1,18,20,94,73,94,94,
-94,94,94,95,15,11,95,94,94,94,
-94,22,47,9,69,17,45,94,94,94,
-94,94,22,19,17,69,94,94,94,94,
-94,94,94,95,94,47,95,94,94,94,
-94,94,73,94,94,94,94,73,94,94,
-94,1,94,94,94,94,94,94,1,94,
-50,94,94,94,94,94,94,94,94,50
+0,0,0,0,0,0,0,0,0,0,
+0,0,1,1,0,0,0,0,0,0,
+0,1,1,1,1,1,1,0,0,0,
+0,1,1,1,1,1,1,1,0,0,
+0,1,1,1,1,0,1,1,0,0,
+0,1,1,1,1,0,0,1,0,0,
+0,0,1,1,1,0,0,0,0,0,
+0,0,1,1,1,0,0,0,0,0,
+0,0,0,0,1,1,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="2" name="Tile Layer 2" width="10" height="10">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,
+0,0,93,73,0,0,0,0,0,0,
+0,73,73,73,73,73,73,0,0,0,
+0,73,94,94,73,73,93,73,0,0,
+0,73,94,94,73,0,73,73,0,0,
+0,73,73,94,73,0,0,73,0,0,
+0,0,73,94,73,0,0,0,0,0,
+0,0,73,73,73,0,0,0,0,0,
+0,0,0,0,73,95,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
 </map>

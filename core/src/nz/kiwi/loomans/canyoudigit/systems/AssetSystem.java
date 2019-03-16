@@ -5,7 +5,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,25 +14,24 @@ import java.util.HashMap;
 
 public class AssetSystem extends BaseSystem {
     public final AssetManager manager = new AssetManager();
-    public HashMap<String, Animation<TextureRegion>> animations = new HashMap<String, Animation<TextureRegion>>();
+    HashMap<String, Animation<TextureRegion>> animations = new HashMap<>();
 
     // Sounds
-    public final String boingSound = "sounds/boing.wav";
-    public final String pingSound = "sounds/ping.wav";
+    private final String boingSound = "sounds/boing.wav";
+    private final String pingSound = "sounds/ping.wav";
 
     // Music
-    public final String playingSong = "sounds/Rolemusic_-_pl4y1ng.mp3";
+    private final String playingSong = "sounds/Rolemusic_-_pl4y1ng.mp3";
 
     // Skin
-    public final String skin = "ui/uiskin.json";
+    private final String skin = "ui/uiskin.json";
 
     // Textures
-    public final String gameImages = "images/game.atlas";
-    public final String loadingImages = "images/loading.atlas";
+    private final String loadingImages = "atlas/loading.atlas";
+    private final String spriteImages = "atlas/sprites.atlas";
 
     public void queueAddImages(){
-        manager.load(gameImages, TextureAtlas.class);
-        manager.load("sprites/char.png", Texture.class);
+        manager.load(spriteImages, TextureAtlas.class);
     }
 
     public void queueAddLoadingImages(){
@@ -58,34 +56,17 @@ public class AssetSystem extends BaseSystem {
     }
 
     public void queueAddAnimations(){
-        final int FRAME_COLS = 4;
-        final int FRAME_ROWS = 4;
-
-        Texture texture = manager.get("sprites/char.png");
-        TextureRegion[][] tmp = TextureRegion.split(texture,
-                texture.getWidth() / FRAME_COLS,
-                texture.getHeight() / FRAME_ROWS);
-
-        TextureRegion[] walkDownFrames = new TextureRegion[FRAME_COLS];
-        System.arraycopy(tmp[0], 0, walkDownFrames, 0, FRAME_COLS);
-
-        TextureRegion[] walkLeftFrames = new TextureRegion[FRAME_COLS];
-        System.arraycopy(tmp[1], 0, walkLeftFrames, 0, FRAME_COLS);
-
-        TextureRegion[] walkRightFrames = new TextureRegion[FRAME_COLS];
-        System.arraycopy(tmp[2], 0, walkRightFrames, 0, FRAME_COLS);
-
-        TextureRegion[] walkUpFrames = new TextureRegion[FRAME_COLS];
-        System.arraycopy(tmp[3], 0, walkUpFrames, 0, FRAME_COLS);
-
-        Animation<TextureRegion> walkDownAnimation = new Animation<TextureRegion>(0.125f, walkDownFrames);
-        Animation<TextureRegion> walkLeftAnimation = new Animation<TextureRegion>(0.125f, walkLeftFrames);
-        Animation<TextureRegion> walkRightAnimation = new Animation<TextureRegion>(0.125f, walkRightFrames);
-        Animation<TextureRegion> walkUpAnimation = new Animation<TextureRegion>(0.125f, walkUpFrames);
+        TextureAtlas atlas = manager.get("atlas/sprites.atlas");
+        Animation<TextureRegion> walkDownAnimation = new Animation<>(0.125f, atlas.findRegions("Walk_Down"));
+        Animation<TextureRegion> walkLeftAnimation = new Animation<>(0.125f, atlas.findRegions("Walk_Left"));
+        Animation<TextureRegion> walkRightAnimation = new Animation<>(0.125f, atlas.findRegions("Walk_Right"));
+        Animation<TextureRegion> walkUpAnimation = new Animation<>(0.125f, atlas.findRegions("Walk_Up"));
+        Animation<TextureRegion> oceanAnimation = new Animation<>(0.125f, atlas.findRegions("Ocean"));
         animations.put("walk_down", walkDownAnimation);
         animations.put("walk_left", walkLeftAnimation);
         animations.put("walk_right", walkRightAnimation);
         animations.put("walk_up", walkUpAnimation);
+        animations.put("ocean", oceanAnimation);
     }
 
     @Override

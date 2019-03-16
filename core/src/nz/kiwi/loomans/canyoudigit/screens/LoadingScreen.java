@@ -26,7 +26,7 @@ public class LoadingScreen implements Screen {
     private Stage stage;
     private Table table;
 
-    private float countDown = 5.1f;
+    private float countDown = 0.5f;
 
     private final int IMAGE = 1;
     private final int FONT = 2;
@@ -44,7 +44,7 @@ public class LoadingScreen implements Screen {
         parent.assetSystem.manager.finishLoading();
 
         // get images used to display loading progress
-        atlas = parent.assetSystem.manager.get("images/loading.atlas");
+        atlas = parent.assetSystem.manager.get("atlas/loading.atlas");
         title = atlas.findRegion("staying-alight-logo");
         dash = atlas.findRegion("loading-dash");
         flameAnimation = new Animation<>(0.07f, atlas.findRegions("flames/flames"), Animation.PlayMode.LOOP);

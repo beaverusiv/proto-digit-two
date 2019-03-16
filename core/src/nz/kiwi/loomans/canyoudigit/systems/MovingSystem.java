@@ -4,7 +4,6 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -28,19 +27,11 @@ public class MovingSystem extends IteratingSystem {
 
     private MapSystem mapSystem;
     private PlayerSystem playerSystem;
-    private TiledMapTileLayer layer;
 
     private static final int PLAYER_DIM = 30;
     private static final float TILE_WIDTH = 128;
     private static final float TILE_HEIGHT = 64;
     private static final float STEP_DURATION = 0.8f;
-
-    @Override
-    protected void initialize() {
-        super.initialize();
-
-        this.layer = (TiledMapTileLayer)mapSystem.map.getLayers().get(0);
-    }
 
     public MovingSystem() {
         super(Aspect.all(PositionComponent.class, MovingComponent.class));
@@ -118,9 +109,7 @@ public class MovingSystem extends IteratingSystem {
                         )
                 );
             } else if (v.x == m.target.x && v.y == m.target.y) {
-                TiledMapTileLayer.Cell cell = layer.getCell((int)m.target.y, (int)m.target.x);
-                if (cell != null && cell.getRotation() != 1) {
-                    cell.setRotation(1);
+                if (mapSystem.digMapTile((int)m.target.y, (int)m.target.x)) {
                     energyComponentMap.get(playerSystem.player).level -= 20;
                 }
                 m.target = null;

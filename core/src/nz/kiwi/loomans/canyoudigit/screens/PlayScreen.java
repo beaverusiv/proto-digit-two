@@ -18,9 +18,8 @@ import nz.kiwi.loomans.canyoudigit.systems.CharacterRenderingSystem;
 import nz.kiwi.loomans.canyoudigit.systems.PlayerSystem;
 
 public class PlayScreen implements Screen {
-    private World world;
     private CameraSystem cameraSystem = new CameraSystem();
-
+    private World world;
     private CanYouDigIt parent;
 
     public PlayScreen(CanYouDigIt game) {
