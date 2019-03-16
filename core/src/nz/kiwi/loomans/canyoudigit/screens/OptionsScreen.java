@@ -5,22 +5,28 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import nz.kiwi.loomans.canyoudigit.CanYouDigIt;
-import nz.kiwi.loomans.canyoudigit.states.GameState;
 
-public class MenuScreen implements Screen {
+public class OptionsScreen implements Screen {
     private CanYouDigIt parent;
     private Stage stage;
     private Skin skin;
+    private Label titleLabel;
+    private Label volumeMusicLabel;
+    private Label volumeSoundLabel;
 
-    public MenuScreen(CanYouDigIt game) {
+    public OptionsScreen(CanYouDigIt game) {
         parent = game;
         stage = new Stage(new ScreenViewport());
         skin = parent.assetSystem.manager.get("ui/uiskin.json");
@@ -34,36 +40,47 @@ public class MenuScreen implements Screen {
         stage.addActor(table);
         Gdx.input.setInputProcessor(stage);
 
-        TextButton newGame = new TextButton("New Game", skin);
-        TextButton preferences = new TextButton("Preferences", skin);
-        TextButton exit = new TextButton("Exit", skin);
-
-        newGame.addListener(new ChangeListener() {
+        final Slider volumeMusicSlider = new Slider( 0f, 1f, 0.1f,false, skin );
+        volumeMusicSlider.setValue( parent.optionsSystem.settings.musicVolume );
+        volumeMusicSlider.addListener( new EventListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                MessageManager.getInstance().dispatchMessage(null, parent.fsm, GameState.GAME.ordinal());
+            public boolean handle(Event event) {
+                parent.optionsSystem.settings.musicVolume = volumeMusicSlider.getValue();
+                return false;
             }
         });
 
-        preferences.addListener(new ChangeListener() {
+        final Slider soundMusicSlider = new Slider( 0f, 1f, 0.1f,false, skin );
+        soundMusicSlider.setValue( parent.optionsSystem.settings.soundVolume );
+        soundMusicSlider.addListener( new EventListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                MessageManager.getInstance().dispatchMessage(null, parent.fsm, GameState.OPTIONS.ordinal());
+            public boolean handle(Event event) {
+                parent.optionsSystem.settings.soundVolume = soundMusicSlider.getValue();
+                return false;
             }
         });
 
-        exit.addListener(new ChangeListener() {
+        final TextButton backButton = new TextButton("Back", skin);
+        backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                Gdx.app.exit();
+                MessageManager.getInstance().dispatchMessage(null, parent.fsm, 0);
             }
         });
 
-        table.add(newGame).fillX().uniformX();
-        table.row().pad(10, 0, 10, 0);
-        table.add(preferences).fillX().uniformX();
+        titleLabel = new Label( "Preferences", skin );
+        volumeMusicLabel = new Label( "Music Volume", skin );
+        volumeSoundLabel = new Label( "Sound Volume", skin );
+
+        table.add(titleLabel).colspan(2);
         table.row();
-        table.add(exit).fillX().uniformX();
+        table.add(volumeMusicLabel).left();
+        table.add(volumeMusicSlider);
+        table.row();
+        table.add(volumeSoundLabel).left();
+        table.add(soundMusicSlider);
+        table.row();
+        table.add(backButton).colspan(2);
     }
 
     @Override

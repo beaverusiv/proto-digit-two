@@ -32,7 +32,7 @@ public class LoadingScreen implements Screen {
     private final int FONT = 2;
     private final int PARTY = 3;
     private final int SOUND = 4;
-    private final int MUSIC = 5;
+    private final int SKIN = 5;
     private final int DONE_LOADING = 6;
 
     public LoadingScreen(CanYouDigIt game) {
@@ -47,7 +47,7 @@ public class LoadingScreen implements Screen {
         atlas = parent.assetSystem.manager.get("images/loading.atlas");
         title = atlas.findRegion("staying-alight-logo");
         dash = atlas.findRegion("loading-dash");
-        flameAnimation = new Animation<TextureRegion>(0.07f, atlas.findRegions("flames/flames"), Animation.PlayMode.LOOP);
+        flameAnimation = new Animation<>(0.07f, atlas.findRegions("flames/flames"), Animation.PlayMode.LOOP);
     }
 
     private Table loadingTable;
@@ -74,9 +74,8 @@ public class LoadingScreen implements Screen {
         loadingTable.add(new LoadingBarPart(dash,flameAnimation));
         loadingTable.add(new LoadingBarPart(dash,flameAnimation));
 
-
         table.add(titleImage).align(Align.center).pad(10, 0, 0, 0).colspan(12);
-        table.row(); // move to next row
+        table.row();
         table.add(loadingTable).width(400);
 
         stage.addActor(table);
@@ -97,6 +96,7 @@ public class LoadingScreen implements Screen {
             switch(currentLoadingStage){
                 case IMAGE:
                     parent.assetSystem.queueAddImages();
+                    break;
                 case FONT:
                     parent.assetSystem.queueAddFonts();
                     break;
@@ -106,8 +106,8 @@ public class LoadingScreen implements Screen {
                 case SOUND:
                     parent.assetSystem.queueAddSounds();
                     break;
-                case MUSIC:
-                    parent.assetSystem.queueAddMusic();
+                case SKIN:
+                    parent.assetSystem.queueAddSkin();
                     break;
                 case DONE_LOADING:
                     break;
@@ -116,7 +116,7 @@ public class LoadingScreen implements Screen {
                 countDown -= delta;
                 currentLoadingStage = DONE_LOADING;
                 if(countDown < 0){
-                    MessageManager.getInstance().dispatchMessage(null, this.parent.fsm, DONE_LOADING);
+                    MessageManager.getInstance().dispatchMessage(null, parent.fsm, DONE_LOADING);
                 }
             }
         }

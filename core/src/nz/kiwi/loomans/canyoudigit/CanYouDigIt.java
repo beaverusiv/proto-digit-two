@@ -6,21 +6,23 @@ import com.badlogic.gdx.ai.fsm.StateMachine;
 import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.audio.Music;
 
-import nz.kiwi.loomans.canyoudigit.screens.MenuScreen;
 import nz.kiwi.loomans.canyoudigit.screens.PlayScreen;
 import nz.kiwi.loomans.canyoudigit.states.GameState;
 import nz.kiwi.loomans.canyoudigit.systems.AssetSystem;
+import nz.kiwi.loomans.canyoudigit.systems.OptionsSystem;
 
 public class CanYouDigIt extends Game {
     public StateMachine<CanYouDigIt, GameState> fsm;
-	public MenuScreen menuScreen;
 	public PlayScreen playScreen;
 	public AssetSystem assetSystem = new AssetSystem();
+	public OptionsSystem optionsSystem = new OptionsSystem();
 	private Music playingSong;
 
 	@Override
 	public void create () {
 	    fsm = new DefaultStateMachine<>(this, GameState.LOADING);
+
+		optionsSystem.init();
 
 		assetSystem.queueAddMusic();
 		assetSystem.manager.finishLoading();

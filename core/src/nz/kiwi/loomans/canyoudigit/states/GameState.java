@@ -6,6 +6,7 @@ import com.badlogic.gdx.ai.msg.Telegram;
 import nz.kiwi.loomans.canyoudigit.CanYouDigIt;
 import nz.kiwi.loomans.canyoudigit.screens.LoadingScreen;
 import nz.kiwi.loomans.canyoudigit.screens.MenuScreen;
+import nz.kiwi.loomans.canyoudigit.screens.OptionsScreen;
 import nz.kiwi.loomans.canyoudigit.screens.PlayScreen;
 
 public enum GameState implements State<CanYouDigIt> {
@@ -27,17 +28,30 @@ public enum GameState implements State<CanYouDigIt> {
     MENU() {
         @Override
         public void enter(CanYouDigIt game) {
-            if(game.menuScreen == null) {
-                game.menuScreen = new MenuScreen(game);
-            }
-            game.setScreen(game.menuScreen);
+            game.setScreen(new MenuScreen(game));
         }
 
         @Override
         public boolean onMessage(CanYouDigIt game, Telegram telegram) {
             if (telegram.message == GameState.GAME.ordinal()) {
                 game.fsm.changeState(GameState.GAME);
+            } else if (telegram.message == GameState.OPTIONS.ordinal()) {
+                game.fsm.changeState(GameState.OPTIONS);
             }
+            return true;
+        }
+    },
+
+    OPTIONS() {
+        @Override
+        public void enter(CanYouDigIt game) {
+            game.setScreen(new OptionsScreen(game));
+        }
+
+        @Override
+        public boolean onMessage(CanYouDigIt game, Telegram telegram) {
+            game.optionsSystem.save();
+            game.fsm.changeState(GameState.MENU);
             return true;
         }
     },

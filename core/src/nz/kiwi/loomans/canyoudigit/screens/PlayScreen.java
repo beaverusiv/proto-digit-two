@@ -8,7 +8,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 
 import nz.kiwi.loomans.canyoudigit.CanYouDigIt;
-import nz.kiwi.loomans.canyoudigit.systems.AssetSystem;
 import nz.kiwi.loomans.canyoudigit.systems.CameraSystem;
 import nz.kiwi.loomans.canyoudigit.systems.EnergySystem;
 import nz.kiwi.loomans.canyoudigit.systems.GuiRenderingSystem;
@@ -22,10 +21,10 @@ public class PlayScreen implements Screen {
     private World world;
     private CameraSystem cameraSystem = new CameraSystem();
 
-    private final AssetSystem assetSystem;
+    private CanYouDigIt parent;
 
     public PlayScreen(CanYouDigIt game) {
-        assetSystem = game.assetSystem;
+        parent = game;
     }
 
     @Override
@@ -63,8 +62,9 @@ public class PlayScreen implements Screen {
     @Override
     public void show() {
         WorldConfiguration config = new WorldConfigurationBuilder()
+            .with(parent.optionsSystem)
+            .with(parent.assetSystem)
             .with(cameraSystem)
-            .with(assetSystem)
             .with(new MapSystem())
             .with(new PlayerSystem())
             .with(new CharacterRenderingSystem())
