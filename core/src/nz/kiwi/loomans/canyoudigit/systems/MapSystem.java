@@ -13,6 +13,8 @@ import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 public class MapSystem extends BaseSystem {
     private CameraSystem cameraSystem;
     private AssetSystem assetSystem;
+    private MovingSystem movingSystem;
+    private PlayerSystem playerSystem;
 
     private SpriteBatch spriteBatch = new SpriteBatch();
     private float stateTime = 0f;
@@ -42,6 +44,9 @@ public class MapSystem extends BaseSystem {
                 }
             }
         }
+        int x = map.getProperties().get("entry_x", Integer.class);
+        int y = map.getProperties().get("entry_y", Integer.class);
+        movingSystem.setTileCoords(x, y, playerSystem.player);
     }
 
     @Override

@@ -17,7 +17,6 @@ public class PlayerSystem extends BaseSystem {
     private ComponentMapper<TextureComponent> texMap;
     private ComponentMapper<MovingComponent> movMap;
     private ComponentMapper<EnergyComponent> nrgMap;
-    private MovingSystem movingSystem;
 
     @Override
     protected void initialize() {
@@ -39,7 +38,6 @@ public class PlayerSystem extends BaseSystem {
         e.max = 100;
         e.lastIncrement = 0;
         e.incrementInterval = 1;
-        movingSystem.setTileCoords(0, 0, player);
     }
 
     @Override
