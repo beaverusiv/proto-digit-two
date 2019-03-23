@@ -12,7 +12,7 @@ public class ContinentsStage extends BaseStage {
     private PlayerSystem playerSystem;
 
     public ContinentsStage(World world) {
-        super(world);
+        super(world, true);
 
         TextButton treasureButton = new TextButton("Map", skin);
 
@@ -22,7 +22,8 @@ public class ContinentsStage extends BaseStage {
             sendMessage(GuiState.MAP.ordinal());
             }
         });
-        table.add(treasureButton);
+
+        table.add(treasureButton).expand().bottom();
     }
 
     public void draw() {

@@ -17,9 +17,11 @@ abstract class BaseStage extends Stage {
 
     Skin skin;
     Table table;
+    private boolean blocksInput;
 
-    BaseStage(World world) {
+    BaseStage(World world, boolean blocksInput) {
         super();
+        this.blocksInput = blocksInput;
         world.inject(this);
         skin = assetSystem.manager.get("ui/uiskin.json", Skin.class);
         table = new Table();
@@ -37,10 +39,17 @@ abstract class BaseStage extends Stage {
     }
 
     public void enter() {
-        inputSystem.inputMultiplexer.setProcessors(this, inputSystem);
+        if (blocksInput) {
+            inputSystem.inputMultiplexer.setProcessors(this);
+        } else {
+            inputSystem.inputMultiplexer.setProcessors(this, inputSystem);
+        }
     }
 
     public void exit() {
         inputSystem.inputMultiplexer.removeProcessor(this);
+        if (blocksInput) {
+            inputSystem.inputMultiplexer.setProcessors(inputSystem);
+        }
     }
 }

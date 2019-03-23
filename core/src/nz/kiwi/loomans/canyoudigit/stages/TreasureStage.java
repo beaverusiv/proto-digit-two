@@ -20,22 +20,23 @@ public class TreasureStage extends BaseStage {
     private Label energyLabel;
 
     public TreasureStage(World world) {
-        super(world);
+        super(world, true);
 
         energyLabel = new Label("Energy Label", skin);
         energyLabel.setSize(Gdx.graphics.getWidth(),50);
         energyLabel.setPosition(0,Gdx.graphics.getHeight()-50*2);
         energyLabel.setAlignment(Align.center);
-        table.add(energyLabel);
 
         TextButton treasureButton = new TextButton("Map", skin);
-
         treasureButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
             sendMessage(GuiState.MAP.ordinal());
             }
         });
+
+        table.add(energyLabel).expand().top().colspan(1);
+        table.row();
         table.add(treasureButton);
     }
 
