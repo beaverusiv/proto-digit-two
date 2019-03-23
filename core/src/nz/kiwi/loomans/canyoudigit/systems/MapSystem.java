@@ -22,28 +22,20 @@ public class MapSystem extends BaseSystem {
     private IsometricTiledMapRenderer renderer;
     private TiledMapTileLayer baseLayer;
     private TiledMapTileLayer dugLayer;
+    private TiledMapTileLayer metaLayer;
 
     public MapSystem() {
         map = new TmxMapLoader().load("maps/first.tmx");
         renderer = new IsometricTiledMapRenderer(map);
         baseLayer = (TiledMapTileLayer)map.getLayers().get(0);
         dugLayer = (TiledMapTileLayer)map.getLayers().get(1);
+        metaLayer = (TiledMapTileLayer)map.getLayers().get(2);
     }
 
     @Override
     protected void initialize() {
         super.initialize();
         cameraSystem.mapCamera.translate(getMapCentre(), 0);
-        int width = map.getProperties().get("width", Integer.class);
-        int height = map.getProperties().get("height", Integer.class);
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                Cell cell = baseLayer.getCell(i, j);
-                if (cell != null) {
-                    baseLayer.getCell(i, j).getTile().getProperties().put("dug", 0);
-                }
-            }
-        }
         int x = map.getProperties().get("entry_x", Integer.class);
         int y = map.getProperties().get("entry_y", Integer.class);
         movingSystem.setTileCoords(x, y, playerSystem.player);
@@ -96,15 +88,16 @@ public class MapSystem extends BaseSystem {
     boolean digMapTile(int across, int down) {
         Cell baseCell = baseLayer.getCell(across, down);
         Cell dugCell = dugLayer.getCell(across, down);
+        Cell metaCell = metaLayer.getCell(across, down);
 
-        if (baseCell == null || dugCell == null) {
+        if (baseCell == null || dugCell == null || metaCell == null) {
             // TODO: when collision detection and pathing is done this should never happen (walk off map)
             return false;
         }
 
-        if (baseCell.getTile().getProperties().get("dug", Integer.class) < 100) {
+        if (metaCell.getTile().getProperties().get("dug", Integer.class) < 100) {
             baseCell.setTile(dugCell.getTile());
-            baseCell.getTile().getProperties().put("dug", 100);
+            metaCell.getTile().getProperties().put("dug", 100);
             return true;
         }
 
