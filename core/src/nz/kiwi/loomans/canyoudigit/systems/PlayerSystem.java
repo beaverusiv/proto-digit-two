@@ -28,13 +28,14 @@ public class PlayerSystem extends BaseSystem {
         MovingComponent mov = movMap.create(player);
         EnergyComponent e = nrgMap.create(player);
 
+        // TODO: load from save
         ani.name = null;
         pos.position = new Vector2(0, 0);
         tex.dimensions = new Vector2(30, 60);
         tex.origin = new Vector2(0, 0);
         tex.name = "atlas/sprites.png";
         mov.target = null;
-        e.level = 0;
+        e.level = 80;
         e.max = 100;
         e.lastIncrement = 0;
         e.incrementInterval = 1;

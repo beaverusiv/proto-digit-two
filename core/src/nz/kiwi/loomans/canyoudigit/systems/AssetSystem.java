@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -32,6 +33,7 @@ public class AssetSystem extends BaseSystem {
 
     public void queueAddImages(){
         manager.load(spriteImages, TextureAtlas.class);
+        manager.load("maps/tutorial/first_preview.png", Texture.class);
     }
 
     public void queueAddLoadingImages(){

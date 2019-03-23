@@ -25,7 +25,7 @@ public class MapSystem extends BaseSystem {
     private TiledMapTileLayer metaLayer;
 
     public MapSystem() {
-        map = new TmxMapLoader().load("maps/first.tmx");
+        map = new TmxMapLoader().load("maps/tutorial/first.tmx");
         renderer = new IsometricTiledMapRenderer(map);
         baseLayer = (TiledMapTileLayer)map.getLayers().get(0);
         dugLayer = (TiledMapTileLayer)map.getLayers().get(1);
