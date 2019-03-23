@@ -26,7 +26,8 @@ public class LoadingScreen implements Screen {
     private Stage stage;
     private Table table;
 
-    private float countDown = 0.5f;
+    // for debugging/developing loading screen
+    private float countDown = 0f;
 
     private final int IMAGE = 1;
     private final int FONT = 2;

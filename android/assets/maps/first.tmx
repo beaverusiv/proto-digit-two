@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="isometric" renderorder="right-down" width="10" height="10" tilewidth="128" tileheight="64" infinite="0" nextlayerid="5" nextobjectid="5">
+<map version="1.2" tiledversion="1.2.1" orientation="isometric" renderorder="right-down" width="10" height="10" tilewidth="128" tileheight="64" infinite="0" nextlayerid="6" nextobjectid="5">
  <properties>
   <property name="entry_x" type="int" value="4"/>
   <property name="entry_y" type="int" value="7"/>
@@ -7,7 +7,8 @@
  <tileset firstgid="1" name="Base" tilewidth="128" tileheight="64" tilecount="96" columns="8">
   <image source="seasons_tiles.png" width="1024" height="768"/>
  </tileset>
- <layer id="1" name="Tile Layer 1" width="10" height="10">
+ <tileset firstgid="97" source="Meta.tsx"/>
+ <layer id="1" name="Undug" width="10" height="10">
   <data encoding="csv">
 0,0,0,1,0,0,0,0,0,0,
 0,0,1,1,1,0,0,0,0,0,
@@ -21,7 +22,7 @@
 1,1,1,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="2" name="Tile Layer 2" width="10" height="10">
+ <layer id="2" name="Dug" width="10" height="10">
   <data encoding="csv">
 0,0,0,73,0,0,0,0,0,0,
 0,0,93,73,73,0,0,0,0,0,
@@ -33,6 +34,20 @@
 0,0,73,73,73,0,0,0,0,0,
 0,73,73,73,73,95,0,0,0,0,
 73,73,73,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="5" name="Meta" width="10" height="10">
+  <data encoding="csv">
+97,97,97,98,97,97,97,97,97,97,
+97,97,98,98,98,97,97,97,97,97,
+97,98,98,98,98,98,98,97,97,97,
+98,98,98,98,98,98,98,98,97,97,
+98,98,98,98,98,97,98,98,98,97,
+97,98,98,98,98,97,97,98,98,98,
+97,97,98,98,98,97,97,97,97,97,
+97,97,98,98,98,97,97,97,97,97,
+97,98,98,98,98,98,97,97,97,97,
+98,98,98,97,97,97,97,97,97,97
 </data>
  </layer>
 </map>

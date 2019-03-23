@@ -4,6 +4,7 @@ import com.artemis.World;
 import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import nz.kiwi.loomans.canyoudigit.systems.AssetSystem;
 import nz.kiwi.loomans.canyoudigit.systems.GuiRenderingSystem;
@@ -15,11 +16,15 @@ abstract class BaseStage extends Stage {
     InputSystem inputSystem;
 
     Skin skin;
+    Table table;
 
     BaseStage(World world) {
         super();
         world.inject(this);
         skin = assetSystem.manager.get("ui/uiskin.json", Skin.class);
+        table = new Table();
+        table.setFillParent(true);
+        this.addActor(table);
     }
 
     void sendMessage(int msg) {
@@ -32,7 +37,7 @@ abstract class BaseStage extends Stage {
     }
 
     public void enter() {
-        inputSystem.inputMultiplexer.addProcessor(this);
+        inputSystem.inputMultiplexer.setProcessors(this, inputSystem);
     }
 
     public void exit() {

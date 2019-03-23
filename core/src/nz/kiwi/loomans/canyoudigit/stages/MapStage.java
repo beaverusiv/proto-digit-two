@@ -18,7 +18,6 @@ public class MapStage extends BaseStage {
     private ComponentMapper<EnergyComponent> nrgMap;
 
     private Label energyLabel;
-    private TextButton treasureButton;
 
     public MapStage(World world) {
         super(world);
@@ -27,17 +26,24 @@ public class MapStage extends BaseStage {
         energyLabel.setSize(Gdx.graphics.getWidth(),50);
         energyLabel.setPosition(0,Gdx.graphics.getHeight()-50*2);
         energyLabel.setAlignment(Align.center);
-        addActor(energyLabel);
+        table.add(energyLabel);
 
-        treasureButton = new TextButton("Treasure", skin);
-
+        TextButton treasureButton = new TextButton("Treasure", skin);
         treasureButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
             sendMessage(GuiState.TREASURE.ordinal());
             }
         });
-        addActor(treasureButton);
+        table.add(treasureButton);
+        TextButton continentsButton = new TextButton("Continents", skin);
+        continentsButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                sendMessage(GuiState.CONTINENTS.ordinal());
+            }
+        });
+        table.add(continentsButton);
     }
 
     public void draw() {

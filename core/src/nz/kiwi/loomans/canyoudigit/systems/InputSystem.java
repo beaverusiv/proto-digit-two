@@ -56,7 +56,7 @@ public class InputSystem extends IteratingSystem implements InputProcessor {
         if (m.target == null && e.level >= 20) {
             m.target = new Vector2(movingSystem.getTileCoords(screenX - 256, screenY - 507));
         }
-        return false;
+        return true;
     }
 
     @Override

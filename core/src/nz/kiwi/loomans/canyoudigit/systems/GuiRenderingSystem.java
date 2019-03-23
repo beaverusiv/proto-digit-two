@@ -12,6 +12,7 @@ import java.util.Map;
 
 import nz.kiwi.loomans.canyoudigit.components.EnergyComponent;
 import nz.kiwi.loomans.canyoudigit.components.GuiComponent;
+import nz.kiwi.loomans.canyoudigit.stages.ContinentsStage;
 import nz.kiwi.loomans.canyoudigit.stages.MapStage;
 import nz.kiwi.loomans.canyoudigit.stages.TreasureStage;
 import nz.kiwi.loomans.canyoudigit.states.GuiState;
@@ -37,6 +38,7 @@ public class GuiRenderingSystem extends BaseSystem {
         MapStage mapStage = new MapStage(world);
         stages.put("MAP", mapStage);
         stages.put("TREASURE", new TreasureStage(world));
+        stages.put("CONTINENTS", new ContinentsStage(world));
 
         // initialise initial stage
         mapStage.enter();
