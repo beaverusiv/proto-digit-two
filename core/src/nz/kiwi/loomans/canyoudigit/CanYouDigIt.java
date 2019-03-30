@@ -10,12 +10,14 @@ import nz.kiwi.loomans.canyoudigit.screens.PlayScreen;
 import nz.kiwi.loomans.canyoudigit.states.GameState;
 import nz.kiwi.loomans.canyoudigit.systems.AssetSystem;
 import nz.kiwi.loomans.canyoudigit.systems.OptionsSystem;
+import nz.kiwi.loomans.canyoudigit.systems.SaveGameSystem;
 
 public class CanYouDigIt extends Game {
     public StateMachine<CanYouDigIt, GameState> fsm;
 	public PlayScreen playScreen;
 	public AssetSystem assetSystem = new AssetSystem();
 	public OptionsSystem optionsSystem = new OptionsSystem();
+	public SaveGameSystem saveGameSystem = new SaveGameSystem();
 	private Music playingSong;
 
 	@Override

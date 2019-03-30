@@ -11,12 +11,15 @@ import nz.kiwi.loomans.canyoudigit.components.PositionComponent;
 import nz.kiwi.loomans.canyoudigit.components.TextureComponent;
 
 public class PlayerSystem extends BaseSystem {
-    public int player;
+    private SaveGameSystem saveGameSystem;
+
     private ComponentMapper<PositionComponent> posMap;
     private ComponentMapper<AnimationComponent> aniMap;
     private ComponentMapper<TextureComponent> texMap;
     private ComponentMapper<MovingComponent> movMap;
     private ComponentMapper<EnergyComponent> nrgMap;
+
+    public int player;
 
     @Override
     protected void initialize() {
@@ -35,10 +38,10 @@ public class PlayerSystem extends BaseSystem {
         tex.origin = new Vector2(0, 0);
         tex.name = "atlas/sprites.png";
         mov.target = null;
-        e.level = 80;
-        e.max = 100;
+        e.level = saveGameSystem.save.energy.level;
+        e.max = saveGameSystem.save.energy.max;
         e.lastIncrement = 0;
-        e.incrementInterval = 1;
+        e.incrementInterval = saveGameSystem.save.energy.incrementInterval;
     }
 
     @Override

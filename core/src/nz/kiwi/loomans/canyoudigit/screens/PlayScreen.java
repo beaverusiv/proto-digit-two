@@ -63,6 +63,7 @@ public class PlayScreen implements Screen {
         WorldConfiguration config = new WorldConfigurationBuilder()
             .with(parent.optionsSystem)
             .with(parent.assetSystem)
+            .with(parent.saveGameSystem)
             .with(cameraSystem)
             .with(new PlayerSystem())
             .with(new MapSystem())

@@ -1,6 +1,8 @@
 package nz.kiwi.loomans.canyoudigit.systems;
 
-import com.artemis.BaseSystem;
+import com.artemis.Aspect;
+import com.artemis.ComponentMapper;
+import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,46 +12,38 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 
-public class MapSystem extends BaseSystem {
+import java.util.HashMap;
+import java.util.Map;
+
+import nz.kiwi.loomans.canyoudigit.MapCellMetadata;
+import nz.kiwi.loomans.canyoudigit.components.MapComponent;
+
+public class MapSystem extends IteratingSystem {
     private CameraSystem cameraSystem;
     private AssetSystem assetSystem;
     private MovingSystem movingSystem;
     private PlayerSystem playerSystem;
+    private SaveGameSystem saveGameSystem;
 
+    private ComponentMapper<MapComponent> mapMap;
+
+    int map;
+
+    private HashMap<String, TiledMap> maps = new HashMap<>();
+    private HashMap<String, IsometricTiledMapRenderer> renderers = new HashMap<>();
     private SpriteBatch spriteBatch = new SpriteBatch();
     private float stateTime = 0f;
-    private TiledMap map;
-    private IsometricTiledMapRenderer renderer;
     private TiledMapTileLayer baseLayer;
     private TiledMapTileLayer dugLayer;
-    private TiledMapTileLayer metaLayer;
 
     public MapSystem() {
-        map = new TmxMapLoader().load("maps/tutorial/first.tmx");
-        renderer = new IsometricTiledMapRenderer(map);
-        baseLayer = (TiledMapTileLayer)map.getLayers().get(0);
-        dugLayer = (TiledMapTileLayer)map.getLayers().get(1);
-        metaLayer = (TiledMapTileLayer)map.getLayers().get(2);
+        super(Aspect.all(MapComponent.class));
     }
 
     @Override
-    protected void initialize() {
-        super.initialize();
-        cameraSystem.mapCamera.translate(getMapCentre(), 0);
-        int x = map.getProperties().get("entry_x", Integer.class);
-        int y = map.getProperties().get("entry_y", Integer.class);
-        movingSystem.setTileCoords(x, y, playerSystem.player);
-    }
-
-    @Override
-    protected void dispose() {
-        super.dispose();
-        map.dispose();
-        renderer.dispose();
-    }
-
-    @Override
-    protected void processSystem() {
+    protected void process(int entityId) {
+        MapComponent mapComponent = mapMap.get(entityId);
+        IsometricTiledMapRenderer renderer = renderers.get(mapComponent.mapId);
         int BG_TILE_DIM = 32;
 
         stateTime += Gdx.graphics.getDeltaTime();
@@ -72,11 +66,68 @@ public class MapSystem extends BaseSystem {
         renderer.render(layers);
     }
 
-    private float getMapCentre() {
-        int mapWidth = map.getProperties().get("width", Integer.class);
-        int tilePixelWidth = map.getProperties().get("tilewidth", Integer.class);
+    @Override
+    protected void initialize() {
+        map = world.create();
+        mapMap.create(map);
+        if (saveGameSystem.save.mapData != null) {
+            loadMap(map, saveGameSystem.save.mapData.mapId, saveGameSystem.save.mapData.metadata);
+        } else {
+            loadMap(map, "maps/tutorial/first.tmx", null);
+        }
+    }
 
-        return mapWidth * tilePixelWidth / 2.0f;
+    @Override
+    protected void dispose() {
+        super.dispose();
+        for (Map.Entry<String, TiledMap> item : maps.entrySet()) {
+            item.getValue().dispose();
+        }
+        for (Map.Entry<String, IsometricTiledMapRenderer> item : renderers.entrySet()) {
+            item.getValue().dispose();
+        }
+    }
+
+    private void loadMap(int entityId, String mapPath, MapCellMetadata[][] mapMetadata) {
+        MapComponent mapComponent = mapMap.get(entityId);
+        mapComponent.mapId = mapPath;
+
+        TiledMap map = new TmxMapLoader().load(mapPath);
+        maps.put(mapPath, map);
+        renderers.put(mapPath, new IsometricTiledMapRenderer(map));
+
+        int mapWidth = map.getProperties().get("width", Integer.class);
+        int mapHeight = map.getProperties().get("height", Integer.class);
+        int tilePixelWidth = map.getProperties().get("tilewidth", Integer.class);
+        cameraSystem.mapCamera.translate(mapWidth * tilePixelWidth / 2.0f, 0);
+
+        baseLayer = (TiledMapTileLayer) map.getLayers().get(0);
+        dugLayer = (TiledMapTileLayer) map.getLayers().get(1);
+        TiledMapTileLayer metaLayer = (TiledMapTileLayer) map.getLayers().get(2);
+
+        if (mapMetadata == null) {
+            mapComponent.metadata = new MapCellMetadata[mapWidth][mapHeight];
+            for (int i = 0; i < mapWidth; i++) {
+                for (int j = 0; j < mapHeight; j++) {
+                    mapComponent.metadata[i][j] = new MapCellMetadata();
+                    mapComponent.metadata[i][j].dug = metaLayer.getCell(i, j).getTile().getProperties().get("dug", Integer.class);
+                    mapComponent.metadata[i][j].walkable = metaLayer.getCell(i, j).getTile().getProperties().get("walkable", Boolean.class);
+                }
+            }
+        } else {
+            mapComponent.metadata = mapMetadata;
+            for (int i = 0; i < mapWidth; i++) {
+                for (int j = 0; j < mapHeight; j++) {
+                    if (mapComponent.metadata[i][j].dug == 100) {
+                        digMapTile(i, j, true);
+                    }
+                }
+            }
+        }
+
+        int x = map.getProperties().get("entry_x", Integer.class);
+        int y = map.getProperties().get("entry_y", Integer.class);
+        movingSystem.setTileCoords(x, y, playerSystem.player);
     }
 
     /**
@@ -86,18 +137,22 @@ public class MapSystem extends BaseSystem {
      * @return whether the tile was replaced or not (useful for energy calc)
      */
     boolean digMapTile(int across, int down) {
+        return digMapTile(across, down, false);
+    }
+
+    private boolean digMapTile(int across, int down, boolean ignoreEnergy) {
+        MapComponent mapComponent = mapMap.get(map);
         Cell baseCell = baseLayer.getCell(across, down);
         Cell dugCell = dugLayer.getCell(across, down);
-        Cell metaCell = metaLayer.getCell(across, down);
 
-        if (baseCell == null || dugCell == null || metaCell == null) {
+        if (baseCell == null || dugCell == null) {
             // TODO: when collision detection and pathing is done this should never happen (walk off map)
             return false;
         }
 
-        if (metaCell.getTile().getProperties().get("dug", Integer.class) < 100) {
+        if (mapComponent.metadata[across][down].dug < 100 || ignoreEnergy) {
             baseCell.setTile(dugCell.getTile());
-            metaCell.getTile().getProperties().put("dug", 100);
+            mapComponent.metadata[across][down].dug = 100;
             return true;
         }
 

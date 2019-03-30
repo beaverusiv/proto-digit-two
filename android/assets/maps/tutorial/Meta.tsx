@@ -3,6 +3,7 @@
  <image source="meta_tiles.png" width="256" height="64"/>
  <tile id="0">
   <properties>
+   <property name="dug" type="int" value="-1"/>
    <property name="walkable" type="bool" value="false"/>
   </properties>
  </tile>

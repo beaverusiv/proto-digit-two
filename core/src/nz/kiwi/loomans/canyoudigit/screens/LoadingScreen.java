@@ -80,6 +80,9 @@ public class LoadingScreen implements Screen {
         table.add(loadingTable).width(400);
 
         stage.addActor(table);
+
+        // TODO: this should be a part of the loading bar, but also async to asset loading
+        parent.saveGameSystem.init();
     }
 
     @Override
