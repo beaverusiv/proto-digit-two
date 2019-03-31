@@ -52,8 +52,12 @@ public class InputSystem extends IteratingSystem implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         MovingComponent m = moveMap.get(playerSystem.player);
         EnergyComponent e = energyMap.get(playerSystem.player);
+        InputComponent i = inputMap.get(playerSystem.player);
         // TODO: refactor and check if tile needs energy to move to - part of player fsm
-        if (m.target == null && e.level >= 20) {
+        if (!i.acceptingInput) {
+            System.out.println("not processing input");
+        }
+        if (i.acceptingInput && m.target == null && e.level >= 20) {
             m.target = new Vector2(movingSystem.getTileCoords(screenX - 256, screenY - 507));
         }
         return true;

@@ -14,36 +14,36 @@ import nz.kiwi.loomans.canyoudigit.systems.SaveGameSystem;
 
 public class CanYouDigIt extends Game {
     public StateMachine<CanYouDigIt, GameState> fsm;
-	public PlayScreen playScreen;
-	public AssetSystem assetSystem = new AssetSystem();
-	public OptionsSystem optionsSystem = new OptionsSystem();
-	public SaveGameSystem saveGameSystem = new SaveGameSystem();
-	private Music playingSong;
+    public PlayScreen playScreen;
+    public AssetSystem assetSystem = new AssetSystem();
+    public OptionsSystem optionsSystem = new OptionsSystem();
+    public SaveGameSystem saveGameSystem = new SaveGameSystem();
+    private Music playingSong;
 
-	@Override
-	public void create () {
-	    fsm = new DefaultStateMachine<>(this, GameState.LOADING);
+    @Override
+    public void create () {
+        fsm = new DefaultStateMachine<>(this, GameState.LOADING);
 
-		optionsSystem.init();
+        optionsSystem.init();
 
-		assetSystem.queueAddMusic();
-		assetSystem.manager.finishLoading();
-		playingSong = assetSystem.manager.get("sounds/Rolemusic_-_pl4y1ng.mp3");
+        assetSystem.queueAddMusic();
+        assetSystem.manager.finishLoading();
+        playingSong = assetSystem.manager.get("sounds/Rolemusic_-_pl4y1ng.mp3");
 
-		playingSong.play();
-	}
+        playingSong.play();
+    }
 
-	@Override
-	public void render () {
+    @Override
+    public void render () {
         MessageManager.getInstance().update();
         fsm.update();
-		super.render();
-	}
-	
-	@Override
-	public void dispose () {
-		super.dispose();
-		playingSong.dispose();
-		assetSystem.manager.dispose();
-	}
+        super.render();
+    }
+
+    @Override
+    public void dispose () {
+        super.dispose();
+        playingSong.dispose();
+        assetSystem.manager.dispose();
+    }
 }

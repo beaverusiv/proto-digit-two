@@ -4,6 +4,7 @@ import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -14,16 +15,14 @@ import nz.kiwi.loomans.canyoudigit.components.AnimationComponent;
 import nz.kiwi.loomans.canyoudigit.components.EnergyComponent;
 import nz.kiwi.loomans.canyoudigit.components.MovingComponent;
 import nz.kiwi.loomans.canyoudigit.components.PositionComponent;
-
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
+import nz.kiwi.loomans.canyoudigit.states.PlayerState;
 
 public class MovingSystem extends IteratingSystem {
     private ComponentMapper<PositionComponent> posMap;
     private ComponentMapper<MovingComponent> moveMap;
     private ComponentMapper<AnimationComponent> aniMap;
     private ComponentMapper<EnergyComponent> energyComponentMap;
-    private HashMap<String, Actor> actors = new HashMap<String, Actor>();
+    private HashMap<String, Actor> actors = new HashMap<>();
 
     private MapSystem mapSystem;
     private PlayerSystem playerSystem;
@@ -31,7 +30,7 @@ public class MovingSystem extends IteratingSystem {
     private static final int PLAYER_DIM = 30;
     private static final float TILE_WIDTH = 128;
     private static final float TILE_HEIGHT = 64;
-    private static final float STEP_DURATION = 0.8f;
+    public static final float STEP_DURATION = 0.8f;
 
     public MovingSystem() {
         super(Aspect.all(PositionComponent.class, MovingComponent.class));
@@ -54,66 +53,29 @@ public class MovingSystem extends IteratingSystem {
             actors.get(key).setPosition(p.position.x, p.position.y);
         }
         Actor actor = actors.get(key);
-        if (!a.running) {
-            Vector2 v = getTileCoords((int) p.position.x, ((int) p.position.y) * -1);
+        Vector2 v = getTileCoords((int) p.position.x, ((int) p.position.y) * -1);
+        if (playerSystem.fsm.isInState(PlayerState.IDLE)) {
             if (v.x < m.target.x) {
                 a.name = "walk_right";
-                a.running = true;
-                actor.addAction(
-                        sequence(
-                                Actions.moveTo(p.position.x + TILE_WIDTH / 2f, p.position.y + TILE_HEIGHT / 2f, STEP_DURATION),
-                                run(new Runnable() {
-                                    public void run() {
-                                        a.running = false;
-                                    }
-                                })
-                        )
-                );
+                actor.addAction(Actions.moveTo(p.position.x + TILE_WIDTH / 2f, p.position.y + TILE_HEIGHT / 2f, STEP_DURATION));
+                MessageManager.getInstance().dispatchMessage(null, playerSystem.fsm, PlayerState.WALKING.ordinal());
             } else if (v.x > m.target.x) {
                 a.name = "walk_left";
-                a.running = true;
-                actor.addAction(
-                        sequence(
-                                Actions.moveTo(p.position.x - TILE_WIDTH / 2f, p.position.y - TILE_HEIGHT / 2f, STEP_DURATION),
-                                run(new Runnable() {
-                                    public void run() {
-                                        a.running = false;
-                                    }
-                                })
-                        )
-                );
+                actor.addAction(Actions.moveTo(p.position.x - TILE_WIDTH / 2f, p.position.y - TILE_HEIGHT / 2f, STEP_DURATION));
+                MessageManager.getInstance().dispatchMessage(null, playerSystem.fsm, PlayerState.WALKING.ordinal());
             } else if (v.y < m.target.y) {
                 a.name = "walk_down";
-                a.running = true;
-                actor.addAction(
-                        sequence(
-                                Actions.moveTo(p.position.x + TILE_WIDTH / 2f, p.position.y - TILE_HEIGHT / 2f, STEP_DURATION),
-                                run(new Runnable() {
-                                    public void run() {
-                                        a.running = false;
-                                    }
-                                })
-                        )
-                );
+                actor.addAction(Actions.moveTo(p.position.x + TILE_WIDTH / 2f, p.position.y - TILE_HEIGHT / 2f, STEP_DURATION));
+                MessageManager.getInstance().dispatchMessage(null, playerSystem.fsm, PlayerState.WALKING.ordinal());
             } else if (v.y > m.target.y) {
                 a.name = "walk_up";
-                a.running = true;
-                actor.addAction(
-                        sequence(
-                                Actions.moveTo(p.position.x - TILE_WIDTH / 2f, p.position.y + TILE_HEIGHT / 2f, STEP_DURATION),
-                                run(new Runnable() {
-                                    public void run() {
-                                        a.running = false;
-                                    }
-                                })
-                        )
-                );
+                actor.addAction(Actions.moveTo(p.position.x - TILE_WIDTH / 2f, p.position.y + TILE_HEIGHT / 2f, STEP_DURATION));
+                MessageManager.getInstance().dispatchMessage(null, playerSystem.fsm, PlayerState.WALKING.ordinal());
             } else if (v.x == m.target.x && v.y == m.target.y) {
-                if (mapSystem.digMapTile((int)m.target.y, (int)m.target.x)) {
+                if (mapSystem.digMapTile((int) m.target.y, (int) m.target.x)) {
                     energyComponentMap.get(playerSystem.player).level -= 20;
                 }
                 m.target = null;
-                a.running = false;
             }
         }
 

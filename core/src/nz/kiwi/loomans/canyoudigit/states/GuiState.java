@@ -31,12 +31,12 @@ public enum GuiState implements State<GuiRenderingSystem> {
 
         @Override
         public boolean onMessage(GuiRenderingSystem system, Telegram telegram) {
-            if (telegram.message == GuiState.TREASURE.ordinal()) {
-                system.fsm.changeState(GuiState.TREASURE);
+            if (telegram.message == TREASURE.ordinal()) {
+                system.fsm.changeState(TREASURE);
                 return true;
             }
-            if (telegram.message == GuiState.CONTINENTS.ordinal()) {
-                system.fsm.changeState(GuiState.CONTINENTS);
+            if (telegram.message == CONTINENTS.ordinal()) {
+                system.fsm.changeState(CONTINENTS);
                 return true;
             }
             return false;
@@ -64,8 +64,8 @@ public enum GuiState implements State<GuiRenderingSystem> {
 
         @Override
         public boolean onMessage(GuiRenderingSystem system, Telegram telegram) {
-            if (telegram.message == GuiState.MAP.ordinal()) {
-                system.fsm.changeState(GuiState.MAP);
+            if (telegram.message == MAP.ordinal()) {
+                system.fsm.changeState(MAP);
                 return true;
             }
             return false;
@@ -93,8 +93,8 @@ public enum GuiState implements State<GuiRenderingSystem> {
 
         @Override
         public boolean onMessage(GuiRenderingSystem system, Telegram telegram) {
-            if (telegram.message == GuiState.MAP.ordinal()) {
-                system.fsm.changeState(GuiState.MAP);
+            if (telegram.message == MAP.ordinal()) {
+                system.fsm.changeState(MAP);
                 return true;
             }
             return false;
