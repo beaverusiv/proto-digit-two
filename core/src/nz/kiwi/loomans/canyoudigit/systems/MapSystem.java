@@ -140,22 +140,33 @@ public class MapSystem extends IteratingSystem {
         return digMapTile(across, down, false);
     }
 
-    private boolean digMapTile(int across, int down, boolean ignoreEnergy) {
+    boolean canDigMapTile(int across, int down) {
+        return digMapTile(across, down, false);
+    }
+
+    private boolean canDigMapTile(int across, int down, boolean ignoreEnergy) {
         MapComponent mapComponent = mapMap.get(map);
         Cell baseCell = baseLayer.getCell(across, down);
         Cell dugCell = dugLayer.getCell(across, down);
 
         if (baseCell == null || dugCell == null) {
-            // TODO: when collision detection and pathing is done this should never happen (walk off map)
             return false;
         }
 
-        if (mapComponent.metadata[across][down].dug < 100 || ignoreEnergy) {
+        return mapComponent.metadata[across][down].dug < 100 || ignoreEnergy;
+
+    }
+
+    private boolean digMapTile(int across, int down, boolean ignoreEnergy) {
+        MapComponent mapComponent = mapMap.get(map);
+        Cell baseCell = baseLayer.getCell(across, down);
+        Cell dugCell = dugLayer.getCell(across, down);
+
+        if (canDigMapTile(across, down, ignoreEnergy)) {
             baseCell.setTile(dugCell.getTile());
             mapComponent.metadata[across][down].dug = 100;
             return true;
         }
-
         return false;
     }
 }

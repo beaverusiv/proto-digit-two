@@ -1,6 +1,8 @@
 package nz.kiwi.loomans.canyoudigit;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ai.GdxAI;
 import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
 import com.badlogic.gdx.ai.fsm.StateMachine;
 import com.badlogic.gdx.ai.msg.MessageManager;
@@ -35,6 +37,8 @@ public class CanYouDigIt extends Game {
 
     @Override
     public void render () {
+        float delta = Gdx.graphics.getDeltaTime();
+        GdxAI.getTimepiece().update(delta);
         MessageManager.getInstance().update();
         fsm.update();
         super.render();

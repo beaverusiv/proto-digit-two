@@ -44,6 +44,26 @@ public enum PlayerState implements State<PlayerSystem> {
             }
             return false;
         }
+    },
+
+    DIGGING() {
+        @Override
+        public void enter(PlayerSystem system) {
+            System.out.println("entering DIGGING");
+            system.inputMap.get(system.player).acceptingInput = false;
+            MessageManager.getInstance().dispatchMessage(MovingSystem.STEP_DURATION, system, system.fsm, IDLE.ordinal());
+        }
+
+        @Override
+        public boolean onMessage(PlayerSystem system, Telegram telegram) {
+            System.out.println("got message in WALKING: " + telegram.message + " " + IDLE.ordinal());
+            if (telegram.message == IDLE.ordinal()) {
+                system.nrgMap.get(system.player).level -= 20;
+                system.fsm.changeState(IDLE);
+                return true;
+            }
+            return false;
+        }
     };
 
     @Override

@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
 import java.util.HashMap;
+import java.util.Stack;
 
 import nz.kiwi.loomans.canyoudigit.components.AnimationComponent;
 import nz.kiwi.loomans.canyoudigit.components.EnergyComponent;
@@ -44,7 +45,13 @@ public class MovingSystem extends IteratingSystem {
         final MovingComponent m = moveMap.get(entityId);
         final AnimationComponent a = aniMap.get(entityId);
         PositionComponent p = posMap.get(entityId);
-        if (m.target == null) {
+        if (m.movements == null) {
+            return;
+        }
+        if (m.movements.empty()) {
+            if (mapSystem.canDigMapTile((int) p.position.y, (int) p.position.x)) {
+                MessageManager.getInstance().dispatchMessage(MovingSystem.STEP_DURATION, playerSystem, playerSystem.fsm, PlayerState.DIGGING.ordinal());
+            }
             return;
         }
         String key = String.valueOf(entityId);
@@ -53,29 +60,32 @@ public class MovingSystem extends IteratingSystem {
             actors.get(key).setPosition(p.position.x, p.position.y);
         }
         Actor actor = actors.get(key);
-        Vector2 v = getTileCoords((int) p.position.x, ((int) p.position.y) * -1);
+
         if (playerSystem.fsm.isInState(PlayerState.IDLE)) {
-            if (v.x < m.target.x) {
-                a.name = "walk_right";
-                actor.addAction(Actions.moveTo(p.position.x + TILE_WIDTH / 2f, p.position.y + TILE_HEIGHT / 2f, STEP_DURATION));
-                MessageManager.getInstance().dispatchMessage(null, playerSystem.fsm, PlayerState.WALKING.ordinal());
-            } else if (v.x > m.target.x) {
-                a.name = "walk_left";
-                actor.addAction(Actions.moveTo(p.position.x - TILE_WIDTH / 2f, p.position.y - TILE_HEIGHT / 2f, STEP_DURATION));
-                MessageManager.getInstance().dispatchMessage(null, playerSystem.fsm, PlayerState.WALKING.ordinal());
-            } else if (v.y < m.target.y) {
-                a.name = "walk_down";
-                actor.addAction(Actions.moveTo(p.position.x + TILE_WIDTH / 2f, p.position.y - TILE_HEIGHT / 2f, STEP_DURATION));
-                MessageManager.getInstance().dispatchMessage(null, playerSystem.fsm, PlayerState.WALKING.ordinal());
-            } else if (v.y > m.target.y) {
-                a.name = "walk_up";
-                actor.addAction(Actions.moveTo(p.position.x - TILE_WIDTH / 2f, p.position.y + TILE_HEIGHT / 2f, STEP_DURATION));
-                MessageManager.getInstance().dispatchMessage(null, playerSystem.fsm, PlayerState.WALKING.ordinal());
-            } else if (v.x == m.target.x && v.y == m.target.y) {
-                if (mapSystem.digMapTile((int) m.target.y, (int) m.target.x)) {
-                    energyComponentMap.get(playerSystem.player).level -= 20;
-                }
-                m.target = null;
+            String movement = m.movements.pop();
+            switch (movement) {
+                case "walk_right":
+                    a.name = "walk_right";
+                    actor.addAction(Actions.moveTo(p.position.x + TILE_WIDTH / 2f, p.position.y + TILE_HEIGHT / 2f, STEP_DURATION));
+                    MessageManager.getInstance().dispatchMessage(null, playerSystem.fsm, PlayerState.WALKING.ordinal());
+                break;
+                case "walk_left":
+                    a.name = "walk_left";
+                    actor.addAction(Actions.moveTo(p.position.x - TILE_WIDTH / 2f, p.position.y - TILE_HEIGHT / 2f, STEP_DURATION));
+                    MessageManager.getInstance().dispatchMessage(null, playerSystem.fsm, PlayerState.WALKING.ordinal());
+                break;
+                case "walk_down":
+                    a.name = "walk_down";
+                    actor.addAction(Actions.moveTo(p.position.x + TILE_WIDTH / 2f, p.position.y - TILE_HEIGHT / 2f, STEP_DURATION));
+                    MessageManager.getInstance().dispatchMessage(null, playerSystem.fsm, PlayerState.WALKING.ordinal());
+                break;
+                case "walk_up":
+                    a.name = "walk_up";
+                    actor.addAction(Actions.moveTo(p.position.x - TILE_WIDTH / 2f, p.position.y + TILE_HEIGHT / 2f, STEP_DURATION));
+                    MessageManager.getInstance().dispatchMessage(null, playerSystem.fsm, PlayerState.WALKING.ordinal());
+                break;
+                default:
+                break;
             }
         }
 
@@ -84,13 +94,38 @@ public class MovingSystem extends IteratingSystem {
         p.position.y = actor.getY();
     }
 
+    void setMovements(MovingComponent movingComponent, PositionComponent positionComponent, Vector2 target) {
+        if (movingComponent == null || positionComponent == null || target == null) {
+            return;
+        }
+
+        movingComponent.movements = new Stack<>();
+        Vector2 v = getTileCoords(positionComponent.position.x, (positionComponent.position.y) * -1);
+
+        while (v.x != target.x || v.y != target.y) {
+            if (v.x < target.x) {
+                movingComponent.movements.push("walk_right");
+                v.x++;
+            } else if (v.x > target.x) {
+                movingComponent.movements.push("walk_left");
+                v.x--;
+            } else if (v.y < target.y) {
+                movingComponent.movements.push("walk_down");
+                v.y++;
+            } else if (v.y > target.y) {
+                movingComponent.movements.push("walk_up");
+                v.y--;
+            }
+        }
+    }
+
     void setTileCoords(int x, int y, int entity) {
         PositionComponent pos = posMap.get(entity);
         pos.position.x = ((x + y) * TILE_WIDTH / 2f) + ((TILE_WIDTH - PLAYER_DIM) / 2f);
         pos.position.y = ((x - y) * TILE_HEIGHT / 2f) + ((TILE_HEIGHT - PLAYER_DIM) / 2f);
     }
 
-    Vector2 getTileCoords(int x, int y) {
+    Vector2 getTileCoords(float x, float y) {
         float x2 = x / TILE_WIDTH - y / TILE_HEIGHT;
         float y2 = y / TILE_HEIGHT + x / TILE_WIDTH;
 
