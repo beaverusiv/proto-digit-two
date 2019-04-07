@@ -46,7 +46,6 @@ public class PlayerSystem extends BaseSystem implements Telegraph {
         PositionComponent pos = posMap.create(player);
         AnimationComponent ani = aniMap.create(player);
         TextureComponent tex = texMap.create(player);
-        MovingComponent mov = movMap.create(player);
         EnergyComponent e = nrgMap.create(player);
         InputComponent i = inputMap.create(player);
 
@@ -57,7 +56,6 @@ public class PlayerSystem extends BaseSystem implements Telegraph {
         tex.dimensions = new Vector2(30, 60);
         tex.origin = new Vector2(0, 0);
         tex.name = "atlas/sprites.png";
-        mov.movements = null;
         e.level = saveGameSystem.save.energy.level;
         e.max = saveGameSystem.save.energy.max;
         e.lastIncrement = 0;

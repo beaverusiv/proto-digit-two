@@ -40,16 +40,16 @@ abstract class BaseStage extends Stage {
 
     public void enter() {
         if (blocksInput) {
-            inputSystem.inputMultiplexer.setProcessors(this);
+            inputSystem.setGuiOnlyInput(this);
         } else {
-            inputSystem.inputMultiplexer.setProcessors(this, inputSystem);
+            inputSystem.setGuiInput(this);
         }
     }
 
     public void exit() {
-        inputSystem.inputMultiplexer.removeProcessor(this);
+        inputSystem.removeGuiInput(this);
         if (blocksInput) {
-            inputSystem.inputMultiplexer.setProcessors(inputSystem);
+            inputSystem.setMapOnlyInput();
         }
     }
 }

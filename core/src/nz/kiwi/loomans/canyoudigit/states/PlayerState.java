@@ -83,7 +83,6 @@ public enum PlayerState implements State<PlayerSystem> {
 
     @Override
     public boolean onMessage(PlayerSystem system, Telegram telegram) {
-        System.out.println("base onMessage()");
         return false;
     }
 }
