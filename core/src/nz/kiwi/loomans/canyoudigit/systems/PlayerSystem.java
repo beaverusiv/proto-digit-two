@@ -14,17 +14,20 @@ import nz.kiwi.loomans.canyoudigit.components.InputComponent;
 import nz.kiwi.loomans.canyoudigit.components.MovingComponent;
 import nz.kiwi.loomans.canyoudigit.components.PositionComponent;
 import nz.kiwi.loomans.canyoudigit.components.TextureComponent;
+import nz.kiwi.loomans.canyoudigit.components.TouchDownComponent;
 import nz.kiwi.loomans.canyoudigit.states.PlayerState;
 
 public class PlayerSystem extends BaseSystem implements Telegraph {
     private SaveGameSystem saveGameSystem;
+    public MovingSystem movingSystem;
 
-    private ComponentMapper<PositionComponent> posMap;
+    public ComponentMapper<PositionComponent> posMap;
     private ComponentMapper<AnimationComponent> aniMap;
     private ComponentMapper<TextureComponent> texMap;
-    private ComponentMapper<MovingComponent> movMap;
+    public ComponentMapper<MovingComponent> movMap;
     public ComponentMapper<EnergyComponent> nrgMap;
     public ComponentMapper<InputComponent> inputMap;
+    public ComponentMapper<TouchDownComponent> touchDownMap;
 
     public int player;
     public StateMachine<PlayerSystem, PlayerState> fsm;
@@ -35,7 +38,6 @@ public class PlayerSystem extends BaseSystem implements Telegraph {
 
     @Override
     public boolean handleMessage(Telegram msg) {
-        System.out.println("handling " + msg.message);
         return fsm.handleMessage(msg);
     }
 

@@ -94,7 +94,7 @@ public class MovingSystem extends IteratingSystem {
         p.position.y = actor.getY();
     }
 
-    void setMovements(MovingComponent movingComponent, PositionComponent positionComponent, Vector2 target) {
+    public void setMovements(MovingComponent movingComponent, PositionComponent positionComponent, Vector2 target) {
         if (movingComponent == null || positionComponent == null || target == null) {
             return;
         }
@@ -125,7 +125,7 @@ public class MovingSystem extends IteratingSystem {
         pos.position.y = ((x - y) * TILE_HEIGHT / 2f) + ((TILE_HEIGHT - PLAYER_DIM) / 2f);
     }
 
-    Vector2 getTileCoords(float x, float y) {
+    public Vector2 getTileCoords(float x, float y) {
         float x2 = x / TILE_WIDTH - y / TILE_HEIGHT;
         float y2 = y / TILE_HEIGHT + x / TILE_WIDTH;
 
