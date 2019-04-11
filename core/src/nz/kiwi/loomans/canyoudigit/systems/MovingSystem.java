@@ -39,11 +39,9 @@ public class MovingSystem extends IteratingSystem {
 
     @Override
     protected void process(int entityId) {
-        // TODO: these different scenarios should be handled by the entity fsm (player system or npc system)
         float deltaTime = Gdx.graphics.getDeltaTime();
 
         final MovingComponent m = moveMap.get(entityId);
-        final AnimationComponent a = aniMap.get(entityId);
         PositionComponent p = posMap.get(entityId);
         if (m.movements == null) {
             return;
@@ -62,24 +60,30 @@ public class MovingSystem extends IteratingSystem {
         Actor actor = actors.get(key);
 
         if (playerSystem.fsm.isInState(PlayerState.IDLE)) {
+            AnimationComponent a;
             String movement = m.movements.pop();
+
             switch (movement) {
                 case "walk_right":
+                    a = aniMap.create(playerSystem.player);
                     a.name = "walk_right";
                     actor.addAction(Actions.moveTo(p.position.x + TILE_WIDTH / 2f, p.position.y + TILE_HEIGHT / 2f, STEP_DURATION));
                     MessageManager.getInstance().dispatchMessage(null, playerSystem.fsm, PlayerState.WALKING.ordinal());
                 break;
                 case "walk_left":
+                    a = aniMap.create(playerSystem.player);
                     a.name = "walk_left";
                     actor.addAction(Actions.moveTo(p.position.x - TILE_WIDTH / 2f, p.position.y - TILE_HEIGHT / 2f, STEP_DURATION));
                     MessageManager.getInstance().dispatchMessage(null, playerSystem.fsm, PlayerState.WALKING.ordinal());
                 break;
                 case "walk_down":
+                    a = aniMap.create(playerSystem.player);
                     a.name = "walk_down";
                     actor.addAction(Actions.moveTo(p.position.x + TILE_WIDTH / 2f, p.position.y - TILE_HEIGHT / 2f, STEP_DURATION));
                     MessageManager.getInstance().dispatchMessage(null, playerSystem.fsm, PlayerState.WALKING.ordinal());
                 break;
                 case "walk_up":
+                    a = aniMap.create(playerSystem.player);
                     a.name = "walk_up";
                     actor.addAction(Actions.moveTo(p.position.x - TILE_WIDTH / 2f, p.position.y + TILE_HEIGHT / 2f, STEP_DURATION));
                     MessageManager.getInstance().dispatchMessage(null, playerSystem.fsm, PlayerState.WALKING.ordinal());

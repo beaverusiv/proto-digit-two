@@ -8,13 +8,14 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 
 import nz.kiwi.loomans.canyoudigit.CanYouDigIt;
+import nz.kiwi.loomans.canyoudigit.systems.AnimationRenderingSystem;
 import nz.kiwi.loomans.canyoudigit.systems.CameraSystem;
 import nz.kiwi.loomans.canyoudigit.systems.EnergySystem;
 import nz.kiwi.loomans.canyoudigit.systems.GuiRenderingSystem;
 import nz.kiwi.loomans.canyoudigit.systems.InputSystem;
 import nz.kiwi.loomans.canyoudigit.systems.MapSystem;
 import nz.kiwi.loomans.canyoudigit.systems.MovingSystem;
-import nz.kiwi.loomans.canyoudigit.systems.CharacterRenderingSystem;
+import nz.kiwi.loomans.canyoudigit.systems.TextureRenderingSystem;
 import nz.kiwi.loomans.canyoudigit.systems.PlayerSystem;
 
 public class PlayScreen implements Screen {
@@ -67,7 +68,8 @@ public class PlayScreen implements Screen {
             .with(cameraSystem)
             .with(new PlayerSystem())
             .with(new MapSystem())
-            .with(new CharacterRenderingSystem())
+            .with(new TextureRenderingSystem())
+            .with(new AnimationRenderingSystem())
             .with(new InputSystem())
             .with(new MovingSystem())
             .with(new GuiRenderingSystem())

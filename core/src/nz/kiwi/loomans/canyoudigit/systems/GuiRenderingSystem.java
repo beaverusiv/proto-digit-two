@@ -32,13 +32,12 @@ public class GuiRenderingSystem extends BaseSystem {
     @Override
     protected void initialize() {
         super.initialize();
-        MapStage mapStage = new MapStage(world);
-        stages.put("MAP", mapStage);
+        stages.put("MAP", new MapStage(world));
         stages.put("TREASURE", new TreasureStage(world));
         stages.put("CONTINENTS", new ContinentsStage(world));
 
         // initialise initial stage
-        mapStage.enter();
+        fsm.getCurrentState().enter(this);
     }
 
     @Override

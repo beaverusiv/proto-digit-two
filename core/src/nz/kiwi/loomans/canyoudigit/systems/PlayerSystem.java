@@ -22,7 +22,7 @@ public class PlayerSystem extends BaseSystem implements Telegraph {
     public MovingSystem movingSystem;
 
     public ComponentMapper<PositionComponent> posMap;
-    private ComponentMapper<AnimationComponent> aniMap;
+    public ComponentMapper<AnimationComponent> aniMap;
     private ComponentMapper<TextureComponent> texMap;
     public ComponentMapper<MovingComponent> movMap;
     public ComponentMapper<EnergyComponent> nrgMap;
@@ -46,14 +46,10 @@ public class PlayerSystem extends BaseSystem implements Telegraph {
         super.initialize();
         player = world.create();
         PositionComponent pos = posMap.create(player);
-        AnimationComponent ani = aniMap.create(player);
         TextureComponent tex = texMap.create(player);
         EnergyComponent e = nrgMap.create(player);
-        InputComponent i = inputMap.create(player);
 
         // TODO: load from save
-        i.acceptingInput = true;
-        ani.name = null;
         pos.position = new Vector2(0, 0);
         tex.dimensions = new Vector2(30, 60);
         tex.origin = new Vector2(0, 0);
@@ -62,6 +58,7 @@ public class PlayerSystem extends BaseSystem implements Telegraph {
         e.max = saveGameSystem.save.energy.max;
         e.lastIncrement = 0;
         e.incrementInterval = saveGameSystem.save.energy.incrementInterval;
+        fsm.getCurrentState().enter(this);
     }
 
     @Override

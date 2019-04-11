@@ -16,7 +16,7 @@ public enum PlayerState implements State<PlayerSystem> {
         @Override
         public void enter(PlayerSystem system) {
             System.out.println("entering IDLE");
-            system.inputMap.get(system.player).acceptingInput = true;
+            system.inputMap.create(system.player);
         }
 
         @Override
@@ -50,7 +50,7 @@ public enum PlayerState implements State<PlayerSystem> {
         @Override
         public void enter(PlayerSystem system) {
             System.out.println("entering WALKING");
-            system.inputMap.get(system.player).acceptingInput = false;
+            system.inputMap.remove(system.player);
             MessageManager.getInstance().dispatchMessage(MovingSystem.STEP_DURATION, system, system.fsm, IDLE.ordinal());
         }
 
@@ -63,13 +63,18 @@ public enum PlayerState implements State<PlayerSystem> {
             }
             return false;
         }
+
+        @Override
+        public void exit(PlayerSystem system) {
+            system.aniMap.remove(system.player);
+        }
     },
 
     DIGGING() {
         @Override
         public void enter(PlayerSystem system) {
             System.out.println("entering DIGGING");
-            system.inputMap.get(system.player).acceptingInput = false;
+            system.inputMap.remove(system.player);
             MessageManager.getInstance().dispatchMessage(MovingSystem.STEP_DURATION, system, system.fsm, IDLE.ordinal());
         }
 
