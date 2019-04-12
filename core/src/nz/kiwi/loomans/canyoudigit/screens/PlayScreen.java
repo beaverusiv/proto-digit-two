@@ -8,6 +8,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 
 import nz.kiwi.loomans.canyoudigit.CanYouDigIt;
+import nz.kiwi.loomans.canyoudigit.systems.ActorSystem;
 import nz.kiwi.loomans.canyoudigit.systems.AnimationRenderingSystem;
 import nz.kiwi.loomans.canyoudigit.systems.CameraSystem;
 import nz.kiwi.loomans.canyoudigit.systems.EnergySystem;
@@ -70,6 +71,7 @@ public class PlayScreen implements Screen {
             .with(new MapSystem())
             .with(new TextureRenderingSystem())
             .with(new AnimationRenderingSystem())
+            .with(new ActorSystem())
             .with(new InputSystem())
             .with(new MovingSystem())
             .with(new GuiRenderingSystem())

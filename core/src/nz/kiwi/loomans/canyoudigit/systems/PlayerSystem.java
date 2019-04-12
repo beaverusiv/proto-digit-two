@@ -8,6 +8,7 @@ import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.math.Vector2;
 
+import nz.kiwi.loomans.canyoudigit.components.ActorComponent;
 import nz.kiwi.loomans.canyoudigit.components.AnimationComponent;
 import nz.kiwi.loomans.canyoudigit.components.EnergyComponent;
 import nz.kiwi.loomans.canyoudigit.components.InputComponent;
@@ -28,6 +29,7 @@ public class PlayerSystem extends BaseSystem implements Telegraph {
     public ComponentMapper<EnergyComponent> nrgMap;
     public ComponentMapper<InputComponent> inputMap;
     public ComponentMapper<TouchDownComponent> touchDownMap;
+    public ComponentMapper<ActorComponent> actorMap;
 
     public int player;
     public StateMachine<PlayerSystem, PlayerState> fsm;

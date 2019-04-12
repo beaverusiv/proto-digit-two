@@ -67,6 +67,7 @@ public enum PlayerState implements State<PlayerSystem> {
         @Override
         public void exit(PlayerSystem system) {
             system.aniMap.remove(system.player);
+            system.actorMap.remove(system.player);
         }
     },
 
